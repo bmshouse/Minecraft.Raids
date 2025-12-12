@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Minecraft Raids",
+    "description": "A raid management behavior pack - resource pack",
+    "uuid": "c15b31d9-f5c7-4cb1-b6a9-fcfd45c6e6d3",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "99893397-bf7a-4b29-9b9f-4c41286065ff",
+      "version": [1, 0, 0]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+##Version of this file
+##2
+
+###Language Settings
+language.name=English
+language.region=United States
+
+###Minecraft Raids - Welcome Messages
+mc.raids.welcome=- Minecraft Raids -
+mc.raids.initialized=You are ready to explore and dominate
+mc.raids.version=v1.0.0
+mc.raids.description=A raid management behavior pack for Minecraft Bedrock Edition
+
+###Minecraft Raids - Book Table of Contents
+mc.raids.book.title=Minecraft Raids Guide
+mc.raids.book.body=Select a section to view:
+mc.raids.book.section.playerlist=Player List
+mc.raids.book.section.raidparty=Raid Party
+mc.raids.book.section.stats=Stats
+
+###Minecraft Raids - Player List Messages
+mc.raids.playerlist.title=Server Players
+mc.raids.playerlist.body=Currently online players:
+mc.raids.playerlist.noplayers=No players online
+mc.raids.playerlist.received=You received a Player Directory!
+
+###Minecraft Raids - Raid Party Section
+mc.raids.raidparty.title=Raid Army
+mc.raids.raidparty.header=Your Raid Army:
+mc.raids.raidparty.noentities=No tamed wolves in your army
+
+###Minecraft Raids - Stats Section
+mc.raids.stats.title=Stats
+mc.raids.stats.placeholder=Coming soon - view your performance stats here!
