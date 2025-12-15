@@ -20,4 +20,6 @@ export function welcomeMessageTest(test: gametest.Test) {
 gametest
   .register("MinecraftRaids", "welcomeMessage", welcomeMessageTest)
   .maxTicks(100)
-  .tag("suite:default");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:default")
+  .tag("batch");

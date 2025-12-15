@@ -1,0 +1,27 @@
+{
+  "entity_sounds": {
+    "entities": {
+      "minecraft:wolf": {
+        "volume": 1.0,
+        "pitch": [0.8, 1.2],
+        "events": {
+          "ambient": "mob.wolf.bark",
+          "death": "mob.wolf.death",
+          "growl": "mob.wolf.growl",
+          "hurt": "mob.wolf.hurt",
+          "pant": "mob.wolf.panting",
+          "shake": {
+            "pitch": [0.8, 1.2],
+            "sound": "mob.wolf.shake"
+          },
+          "step": {
+            "pitch": 1.0,
+            "sound": "mob.wolf.step",
+            "volume": 0.65
+          },
+          "whine": "mob.wolf.whine"
+        }
+      }
+    }
+  }
+}

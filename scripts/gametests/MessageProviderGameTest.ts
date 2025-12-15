@@ -58,4 +58,6 @@ export function messageProviderTest(test: gametest.Test) {
 gametest
   .register("MinecraftRaids", "messageProvider", messageProviderTest)
   .maxTicks(50)
-  .tag("suite:default");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:default")
+  .tag("batch");

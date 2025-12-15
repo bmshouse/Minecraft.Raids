@@ -15,6 +15,8 @@ import { PlayerBookService } from "../core/features/PlayerBookService";
 export function wolfTamingTest(test: gametest.Test) {
   // Spawn a wolf
   const wolf = test.spawn("minecraft:wolf", { x: 1, y: 0, z: 0 });
+  // Initialize wolf with entity_spawned event (adds wolf_wild component group)
+  wolf.triggerEvent("minecraft:entity_spawned");
 
   // Get tameable component
   const tameable = wolf.getComponent(EntityComponentTypes.Tameable) as EntityTameableComponent | undefined;
@@ -22,10 +24,15 @@ export function wolfTamingTest(test: gametest.Test) {
   test.assert(tameable !== undefined, "Wolf should have Tameable component");
   test.assert(!tameable?.isTamed, "Wolf should start untamed");
 
-  // Tame the wolf by triggering the tame event
-  wolf.triggerEvent("minecraft:on_tame");
+  // Get a simulated player for taming
+  const player = test.spawnSimulatedPlayer({ x: 0, y: 0, z: 0 }, "TestPlayer");
 
-  // Schedule check after tame event processes
+  // Use the tame() method - this sets API-level tame state
+  if (tameable) {
+    tameable.tame(player);
+  }
+
+  // Schedule check after taming
   test.runAtTickTime(10, () => {
     const tameableAfter = wolf.getComponent(EntityComponentTypes.Tameable) as EntityTameableComponent | undefined;
     test.assert(tameableAfter?.isTamed === true, "Wolf should be tamed after event");
@@ -108,24 +115,34 @@ export function raidPartyMessagesTest(test: gametest.Test) {
 gametest
   .register("MinecraftRaids", "wolfTaming", wolfTamingTest)
   .maxTicks(20)
-  .tag("suite:raidparty");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:raidparty")
+  .tag("batch");
 
 gametest
   .register("MinecraftRaids", "wolfQuery", wolfQueryTest)
   .maxTicks(20)
-  .tag("suite:raidparty");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:raidparty")
+  .tag("batch");
 
 gametest
   .register("MinecraftRaids", "wolfHealth", wolfHealthTest)
   .maxTicks(10)
-  .tag("suite:raidparty");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:raidparty")
+  .tag("batch");
 
 gametest
   .register("MinecraftRaids", "playerBookService", playerBookServiceTest)
   .maxTicks(10)
-  .tag("suite:raidparty");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:raidparty")
+  .tag("batch");
 
 gametest
   .register("MinecraftRaids", "raidPartyMessages", raidPartyMessagesTest)
   .maxTicks(100)
-  .tag("suite:raidparty");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:raidparty")
+  .tag("batch");

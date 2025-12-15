@@ -32,3 +32,11 @@ mc.raids.raidparty.noentities=No tamed wolves in your army
 ###Minecraft Raids - Stats Section
 mc.raids.stats.title=Stats
 mc.raids.stats.placeholder=Coming soon - view your performance stats here!
+
+###Minecraft Raids - Wolf Leveling Messages
+mc.raids.wolf.levelup=Your wolf leveled up to Level
+mc.raids.wolf.level1=Guard Wolf
+mc.raids.wolf.level2=Veteran Wolf
+mc.raids.wolf.level3=Elite Wolf
+mc.raids.wolf.kills=Kills:
+mc.raids.wolf.nextlevel=Next level:

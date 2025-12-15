@@ -13,6 +13,8 @@ import { MessageProvider } from "./core/messaging/MessageProvider";
 import { WelcomeInitializer } from "./core/initialization/WelcomeInitializer";
 import { PlayerBookInitializer } from "./core/initialization/PlayerBookInitializer";
 import { PlayerBookService } from "./core/features/PlayerBookService";
+import { WolfLevelingService } from "./core/features/WolfLevelingService";
+import { WolfLevelingInitializer } from "./core/initialization/WolfLevelingInitializer";
 import type { IInitializer } from "./core/initialization/IInitializer";
 
 // Import GameTest files to register them
@@ -20,6 +22,7 @@ import "./gametests/WelcomeGameTest";
 import "./gametests/MessageProviderGameTest";
 import "./gametests/PlayerListGameTest";
 import "./gametests/RaidPartyGameTest";
+import "./gametests/WolfLevelingGameTest";
 
 /**
  * Initializes all pack systems
@@ -29,11 +32,13 @@ function initializePack(): void {
   // Create dependencies (Composition Root pattern)
   const messageProvider = new MessageProvider();
   const playerBookService = new PlayerBookService(messageProvider);
+  const wolfLevelingService = new WolfLevelingService(messageProvider);
 
   // Create initializers
   const initializers: IInitializer[] = [
     new WelcomeInitializer(messageProvider),
     new PlayerBookInitializer(playerBookService),
+    new WolfLevelingInitializer(wolfLevelingService),
   ];
 
   // Execute all initializers

@@ -79,22 +79,13 @@ Minecraft.Raids/
 
 ### Testing Strategy
 
-This project follows **Microsoft's recommended testing approach** for Minecraft Bedrock scripts:
+This project follows **Microsoft's recommended testing approach** for Minecraft Bedrock scripts, combining unit tests for pure logic with in-game GameTest validation.
 
-1. **Unit Tests (Vitest)** - Pure TypeScript logic
-   - `MessageProvider.test.ts` - Message system functionality
-   - Fast, isolated, run offline
+- **Unit Tests (Vitest)** - Pure TypeScript logic and utilities
+- **GameTest Framework** - In-game integration tests for Minecraft-specific features
+- **Manual Testing** - User experience validation with `npm run local-deploy`
 
-2. **GameTest (In-Game)** - Minecraft-specific features
-   - `WelcomeGameTest.ts` - Welcome system validation
-   - `MessageProviderGameTest.ts` - Provider in-game validation
-   - Runs IN Minecraft to validate real behavior
-
-3. **Manual Testing** - User experience
-   - Use `npm run local-deploy` for rapid iteration
-   - Test in actual Minecraft client
-
-See [TESTING.md](TESTING.md) for complete testing guide.
+See [TESTING.md](./TESTING.md) for comprehensive testing guide including unit test and GameTest examples.
 
 ## Setup
 
@@ -127,18 +118,16 @@ npm run mcaddon         # Create .mcaddon package file for sharing
 
 ### Testing
 
+See [TESTING.md](./TESTING.md) for complete testing guide.
+
 ```bash
-# Unit Tests (Pure Logic)
+# Unit Tests
 npm run test            # Run all unit tests once
-npm run test:watch      # Run tests in watch mode for development
+npm run test:watch      # Run tests in watch mode
 npm run test:ui         # Open interactive test UI dashboard
 
-# GameTests (In-Game)
-# 1. Enable GameTest Framework in Minecraft settings
-# 2. Deploy: npm run local-deploy
-# 3. Load world with behavior pack
-# 4. Run: /gametest run MinecraftRaids:welcomeMessage
-#        /gametest run MinecraftRaids:messageProvider
+# Manual testing (rapid iteration)
+npm run local-deploy    # Deploy with auto-rebuild on changes
 ```
 
 ## Development
@@ -278,15 +267,14 @@ const withFallback = messageProvider.getMessage("missing.key", "Fallback text");
 When contributing, maintain the established patterns:
 
 1. Follow SOLID principles
-2. Write appropriate tests:
+2. Write appropriate tests (see [TESTING.md](./TESTING.md)):
    - Unit tests (Vitest) for pure logic
    - GameTest for Minecraft-specific features
-   - See [TESTING.md](TESTING.md) for guidelines
 3. Use dependency injection
 4. Keep interfaces focused
 5. Avoid code duplication
 6. Run `npm run lint` before committing
-7. Ensure `npm test` passes for unit tests
+7. Ensure `npm test` passes
 
 ## License
 
@@ -294,8 +282,8 @@ This project is provided as-is for educational purposes.
 
 ## Documentation
 
-- **[TESTING.md](TESTING.md)** - Comprehensive testing guide (unit tests, GameTest, manual testing)
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment and configuration guide
+- **[TESTING.md](./TESTING.md)** - Comprehensive testing guide (unit tests, GameTest, manual testing, wolf leveling tests)
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment and configuration guide
 
 ## Resources
 

@@ -67,9 +67,13 @@ export function bookNavigationMessagesExistTest(test: gametest.Test) {
 gametest
   .register("MinecraftRaids", "playerBookInitializer", playerBookInitializerSubscribesTest)
   .maxTicks(100)
-  .tag("suite:default");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:default")
+  .tag("batch");
 
 gametest
   .register("MinecraftRaids", "bookNavigationMessages", bookNavigationMessagesExistTest)
   .maxTicks(100)
-  .tag("suite:default");
+  .structureName("MinecraftRaids:simple")
+  .tag("suite:default")
+  .tag("batch");
