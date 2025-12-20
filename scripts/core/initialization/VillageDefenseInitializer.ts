@@ -15,14 +15,14 @@ export class VillageDefenseInitializer implements IInitializer {
    * Scans for villagers near players every 5 seconds
    */
   public initialize(): void {
-    console.warn("[VillageDefense] VillageDefenseInitializer.initialize() called");
+    console.log("[VillageDefense] VillageDefenseInitializer.initialize() called");
 
     // Run periodic scan every 100 ticks (5 seconds)
     system.runInterval(() => {
       this.scanForVillages();
     }, 100);
 
-    console.warn("[VillageDefense] Started periodic village scanning (every 5 seconds)");
+    console.log("[VillageDefense] Started periodic village scanning (every 5 seconds)");
   }
 
   /**
@@ -48,14 +48,14 @@ export class VillageDefenseInitializer implements IInitializer {
           const villageLocation = villager.location;
 
           // Log detection
-          console.warn(
+          console.log(
             `[VillageDefense] Village detected at (${Math.round(villageLocation.x)}, ${Math.round(villageLocation.y)}, ${Math.round(villageLocation.z)})`
           );
 
           // Enhance village (fire and forget)
           // State checking happens in enhanceVillage() - skips if fully defended, retries failed spawns if partially defended
           this.defenseService.enhanceVillage(villageLocation).catch((error) => {
-            console.warn(
+            console.log(
               `[VillageDefense] ERROR enhancing village at (${Math.round(villageLocation.x)}, ${Math.round(villageLocation.z)}): ${error}`
             );
           });
@@ -66,7 +66,7 @@ export class VillageDefenseInitializer implements IInitializer {
         }
       }
     } catch (error) {
-      console.warn(`[VillageDefense] Error in scanForVillages: ${error}`);
+      console.log(`[VillageDefense] Error in scanForVillages: ${error}`);
     }
   }
 }

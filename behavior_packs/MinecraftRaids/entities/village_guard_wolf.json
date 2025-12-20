@@ -3,6 +3,7 @@
   "minecraft:entity": {
     "description": {
       "identifier": "minecraftraids:village_guard_wolf",
+      "runtime_identifier": "minecraft:wolf",
       "is_spawnable": false,
       "is_summonable": true,
       "is_experimental": false
@@ -100,6 +101,11 @@
         "value": 25
       },
       "minecraft:persistent": {},
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
       "minecraft:behavior.float": {
         "priority": 0
       },
@@ -113,96 +119,137 @@
                 {
                   "test": "is_family",
                   "subject": "other",
-                  "value": "zombie"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "skeleton"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "creeper"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "spider"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "enderman"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "blaze"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "witch"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "pillager"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "vindicator"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "evoker"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "ravager"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "phantom"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "drowned"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "husk"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "stray"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "wither_skeleton"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "hoglin"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "piglin_brute"
+                  "value": "player"
                 }
               ]
             },
             "max_dist": 25
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "zombie"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "skeleton"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "creeper"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "spider"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "enderman"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "blaze"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "witch"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "pillager"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "vindicator"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "evoker"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "ravager"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "phantom"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "drowned"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "husk"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "stray"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "wither_skeleton"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "hoglin"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "piglin_brute"
+                    }
+                  ]
+                },
+                {
+                  "none_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "village_guard"
+                    }
+                  ]
+                }
+              ]
+            },
+            "max_dist": 25
+          }
+        ]
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 3,
+        "entity_types": [
+          {
+            "filters": {
+              "none_of": [
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "village_guard"
+                }
+              ]
+            }
           }
         ]
       },
@@ -218,92 +265,117 @@
                 {
                   "test": "is_family",
                   "subject": "other",
-                  "value": "zombie"
+                  "value": "player"
+                }
+              ]
+            },
+            "max_dist": 25
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "zombie"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "skeleton"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "creeper"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "spider"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "enderman"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "blaze"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "witch"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "pillager"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "vindicator"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "evoker"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "ravager"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "phantom"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "drowned"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "husk"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "stray"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "wither_skeleton"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "hoglin"
+                    },
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "piglin_brute"
+                    }
+                  ]
                 },
                 {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "skeleton"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "creeper"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "spider"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "enderman"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "blaze"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "witch"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "pillager"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "vindicator"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "evoker"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "ravager"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "phantom"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "drowned"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "husk"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "stray"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "wither_skeleton"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "hoglin"
-                },
-                {
-                  "test": "is_family",
-                  "subject": "other",
-                  "value": "piglin_brute"
+                  "none_of": [
+                    {
+                      "test": "is_family",
+                      "subject": "other",
+                      "value": "village_guard"
+                    }
+                  ]
                 }
               ]
             },

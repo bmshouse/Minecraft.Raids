@@ -1,0 +1,14 @@
+{
+  "format_version": "1.10.0",
+  "render_controllers": {
+    "controller.render.village_guard": {
+      "geometry": "geometry.default",
+      "materials": [
+        {
+          "*": "material.default"
+        }
+      ],
+      "textures": ["Texture.default"]
+    }
+  }
+}

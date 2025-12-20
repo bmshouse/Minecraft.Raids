@@ -3,6 +3,7 @@ import {
   PlayerSpawnAfterEvent,
   Player,
   TicksPerSecond,
+  ItemLockMode,
   ItemStack,
   EntityInventoryComponent,
 } from "@minecraft/server";
@@ -104,13 +105,11 @@ export class WelcomeInitializer implements IInitializer {
           rawtext: [{ text: "§a" }, bookMessage],
         });
 
-        try {
-          player.runCommand('give @s minecraft_raids:player_list_book 1 0 {"minecraft:item_lock":{"mode":"lock_in_inventory"}}');
-        } catch (error) {
-          // Fallback: If command fails, try adding normally (won't be locked but better than nothing)
-          inventory.container.addItem(new ItemStack("minecraft_raids:player_list_book", 1));
-          console.warn("Failed to give locked player list book, gave unlocked version instead", error);
-        }
+        const player_book = new ItemStack("minecraft_raids:player_list_book", 1);
+        player_book.keepOnDeath = true;
+        player_book.lockMode = ItemLockMode.slot;
+
+        inventory.container.addItem(player_book);
       }
     }
   }

@@ -40,3 +40,8 @@ mc.raids.wolf.level2=Veteran Wolf
 mc.raids.wolf.level3=Elite Wolf
 mc.raids.wolf.kills=Kills:
 mc.raids.wolf.nextlevel=Next level:
+
+###Minecraft Raids - Village Defense Entity Names
+entity.minecraftraids:village_guard_wolf.name=Village Guard Wolf
+entity.minecraftraids:village_guard_pillager.name=Village Guard
+entity.minecraftraids:village_defense_iron_golem.name=Village Defense Iron Golem

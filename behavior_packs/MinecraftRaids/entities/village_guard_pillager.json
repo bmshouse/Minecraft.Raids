@@ -1,14 +1,57 @@
 {
-  "format_version": "1.21.0",
+  "format_version": "1.21.50",
   "minecraft:entity": {
     "description": {
       "identifier": "minecraftraids:village_guard_pillager",
+      "runtime_identifier": "minecraft:pillager",
       "is_spawnable": true,
       "is_summonable": true,
       "is_experimental": false
     },
-    "component_groups": {},
+    "component_groups": {
+      "minecraft:ranged_attack": {
+        "minecraft:behavior.ranged_attack": {
+          "priority": 4,
+          "attack_interval_min": 1.0,
+          "attack_interval_max": 1.0,
+          "attack_radius": 8.0
+        },
+        "minecraft:shooter": {
+          "def": "minecraft:arrow"
+        },
+        "minecraft:environment_sensor": {
+          "triggers": {
+            "filters": { "test": "is_underwater", "subject": "self", "operator": "==", "value": true },
+            "event": "minecraft:melee_mode"
+          }
+        }
+      },
+      "minecraft:melee_attack": {
+        "minecraft:attack": {
+          "damage": 3
+        },
+        "minecraft:environment_sensor": {
+          "triggers": {
+            "filters": { "test": "in_water", "subject": "self", "operator": "==", "value": false },
+            "event": "minecraft:ranged_mode"
+          }
+        },
+        "minecraft:behavior.melee_box_attack": {
+          "priority": 4,
+          "track_target": true
+        }
+      }
+    },
     "components": {
+      "minecraft:equippable": {
+        "slots": [
+          {
+            "slot": 0,
+            "item": "minecraft:crossbow",
+            "accepted_items": [ "minecraft:crossbow" ]
+          }
+        ]
+      },
       "minecraft:type_family": {
         "family": ["pillager", "village_guard", "mob"]
       },
@@ -20,6 +63,7 @@
         "value": 24,
         "max": 24
       },
+      "minecraft:equip_item": {},
       "minecraft:movement": {
         "value": 0.35
       },
@@ -54,27 +98,30 @@
       "minecraft:equipment": {
         "table": "loot_tables/entities/pillager_gear.json"
       },
-      "minecraft:shareables": {
-        "items": [
-          {
-            "item": "minecraft:crossbow",
-            "want_amount": 1,
-            "surplus_amount": 1,
-            "priority": 0
-          }
-        ]
-      },
-      "minecraft:shooter": {
-        "def": "minecraft:arrow"
-      },
-      "minecraft:behavior.ranged_attack": {
-        "priority": 0,
-        "attack_interval_min": 1.0,
-        "attack_interval_max": 3.0,
-        "attack_radius": 16.0
-      },
       "minecraft:behavior.hurt_by_target": {
-        "priority": 1
+        "priority": 1,
+        "entity_types": {
+          "filters": {
+            "all_of": [
+              {
+                "test": "is_family",
+                "subject": "other",
+                "operator": "!=",
+                "value": "village_guard"
+              }
+            ]
+          },
+          "max_dist": 64
+        }
+      },
+      "minecraft:behavior.equip_item": {
+        "priority": 3
+      },
+      "minecraft:behavior.charge_held_item": {
+        "priority": 3,
+        "items": [
+          "minecraft:arrow"
+        ]
       },
       "minecraft:behavior.nearest_attackable_target": {
         "priority": 2,
@@ -85,16 +132,33 @@
           {
             "filters": {
               "any_of": [
-                { "test": "is_family", "subject": "other", "value": "zombie" },
-                { "test": "is_family", "subject": "other", "value": "skeleton" },
-                { "test": "is_family", "subject": "other", "value": "creeper" },
-                { "test": "is_family", "subject": "other", "value": "spider" },
-                { "test": "is_family", "subject": "other", "value": "enderman" },
-                { "test": "is_family", "subject": "other", "value": "phantom" },
-                { "test": "is_family", "subject": "other", "value": "pillager" },
-                { "test": "is_family", "subject": "other", "value": "blaze" },
-                { "test": "is_family", "subject": "other", "value": "witch" },
-                { "test": "is_family", "subject": "other", "value": "ravager" }
+                { "test": "is_family", "subject": "other", "value": "player" }
+              ]
+            },
+            "max_dist": 16
+          },
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "any_of": [
+                    { "test": "is_family", "subject": "other", "value": "zombie" },
+                    { "test": "is_family", "subject": "other", "value": "skeleton" },
+                    { "test": "is_family", "subject": "other", "value": "creeper" },
+                    { "test": "is_family", "subject": "other", "value": "spider" },
+                    { "test": "is_family", "subject": "other", "value": "enderman" },
+                    { "test": "is_family", "subject": "other", "value": "phantom" },
+                    { "test": "is_family", "subject": "other", "value": "pillager" },
+                    { "test": "is_family", "subject": "other", "value": "blaze" },
+                    { "test": "is_family", "subject": "other", "value": "witch" },
+                    { "test": "is_family", "subject": "other", "value": "ravager" }
+                  ]
+                },
+                {
+                  "none_of": [
+                    { "test": "is_family", "subject": "other", "value": "village_guard" }
+                  ]
+                }
               ]
             },
             "max_dist": 20
@@ -124,6 +188,38 @@
         "priority": 10
       }
     },
-    "events": {}
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "minecraft:ranged_attack"
+          ]
+        }
+      },
+      "minecraft:melee_mode": {
+        "remove": {
+          "component_groups": [
+            "minecraft:ranged_attack"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "minecraft:melee_attack"
+          ]
+        }
+      },
+      "minecraft:ranged_mode": {
+        "remove": {
+          "component_groups": [
+            "minecraft:melee_attack"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "minecraft:ranged_attack"
+          ]
+        }
+      }
+    }
   }
 }
