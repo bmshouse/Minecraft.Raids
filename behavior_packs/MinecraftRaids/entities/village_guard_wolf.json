@@ -1,0 +1,361 @@
+{
+  "format_version": "1.16.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraftraids:village_guard_wolf",
+      "is_spawnable": false,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "component_groups": {
+      "minecraftraids:tier_1": {
+        "minecraft:health": {
+          "value": 25,
+          "max": 25
+        },
+        "minecraft:attack": {
+          "damage": 5
+        },
+        "minecraft:scale": {
+          "value": 1.1
+        }
+      },
+      "minecraftraids:tier_2": {
+        "minecraft:health": {
+          "value": 35,
+          "max": 35
+        },
+        "minecraft:attack": {
+          "damage": 7
+        },
+        "minecraft:scale": {
+          "value": 1.25
+        }
+      },
+      "minecraftraids:tier_3": {
+        "minecraft:health": {
+          "value": 50,
+          "max": 50
+        },
+        "minecraft:attack": {
+          "damage": 10
+        },
+        "minecraft:scale": {
+          "value": 1.4
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": ["wolf", "village_guard", "mob"]
+      },
+      "minecraft:dweller": {
+        "dwelling_type": "village",
+        "dweller_role": "defender",
+        "update_interval_base": 60,
+        "update_interval_variant": 40,
+        "can_find_poi": false,
+        "can_migrate": false
+      },
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 0.8
+      },
+      "minecraft:health": {
+        "value": 25,
+        "max": 25
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:movement": {
+        "value": 0.35
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:attack": {
+        "damage": 5
+      },
+      "minecraft:follow_range": {
+        "value": 25
+      },
+      "minecraft:persistent": {},
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.defend_village_target": {
+        "priority": 1,
+        "must_reach": true,
+        "entity_types": [
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "zombie"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "skeleton"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "creeper"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "spider"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "enderman"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "blaze"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "witch"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "pillager"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "vindicator"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "evoker"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "ravager"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "phantom"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "drowned"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "husk"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "stray"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "wither_skeleton"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "hoglin"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "piglin_brute"
+                }
+              ]
+            },
+            "max_dist": 25
+          }
+        ]
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 3,
+        "must_see": true,
+        "reselect_targets": true,
+        "within_radius": 25.0,
+        "entity_types": [
+          {
+            "filters": {
+              "any_of": [
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "zombie"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "skeleton"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "creeper"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "spider"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "enderman"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "blaze"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "witch"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "pillager"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "vindicator"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "evoker"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "ravager"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "phantom"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "drowned"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "husk"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "stray"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "wither_skeleton"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "hoglin"
+                },
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "piglin_brute"
+                }
+              ]
+            },
+            "max_dist": 25
+          }
+        ]
+      },
+      "minecraft:behavior.move_through_village": {
+        "priority": 4,
+        "speed_multiplier": 0.6,
+        "only_at_night": false
+      },
+      "minecraft:behavior.move_towards_dwelling_restriction": {
+        "priority": 5,
+        "speed_multiplier": 1.0
+      },
+      "minecraft:behavior.melee_attack": {
+        "priority": 6,
+        "track_target": true,
+        "attack_once": false
+      },
+      "minecraft:behavior.leap_at_target": {
+        "priority": 7,
+        "target_dist": 0.4
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 8,
+        "speed_multiplier": 0.6,
+        "xz_dist": 16,
+        "y_dist": 4
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 9,
+        "target_distance": 6
+      }
+    },
+    "events": {
+      "minecraftraids:set_tier_1": {
+        "add": {
+          "component_groups": ["minecraftraids:tier_1"]
+        }
+      },
+      "minecraftraids:set_tier_2": {
+        "add": {
+          "component_groups": ["minecraftraids:tier_2"]
+        }
+      },
+      "minecraftraids:set_tier_3": {
+        "add": {
+          "component_groups": ["minecraftraids:tier_3"]
+        }
+      }
+    }
+  }
+}

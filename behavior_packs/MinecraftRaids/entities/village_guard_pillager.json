@@ -1,0 +1,129 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "minecraftraids:village_guard_pillager",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "component_groups": {},
+    "components": {
+      "minecraft:type_family": {
+        "family": ["pillager", "village_guard", "mob"]
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 1.9
+      },
+      "minecraft:health": {
+        "value": 24,
+        "max": 24
+      },
+      "minecraft:movement": {
+        "value": 0.35
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": false,
+        "avoid_water": true,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:dweller": {
+        "dwelling_type": "village",
+        "dweller_role": "defender",
+        "update_interval_base": 60,
+        "update_interval_variant": 40,
+        "can_find_poi": false,
+        "can_migrate": false,
+        "first_founding_reward": 0
+      },
+      "minecraft:persistent": {},
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:nameable": {},
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0
+      },
+      "minecraft:equipment": {
+        "table": "loot_tables/entities/pillager_gear.json"
+      },
+      "minecraft:shareables": {
+        "items": [
+          {
+            "item": "minecraft:crossbow",
+            "want_amount": 1,
+            "surplus_amount": 1,
+            "priority": 0
+          }
+        ]
+      },
+      "minecraft:shooter": {
+        "def": "minecraft:arrow"
+      },
+      "minecraft:behavior.ranged_attack": {
+        "priority": 0,
+        "attack_interval_min": 1.0,
+        "attack_interval_max": 3.0,
+        "attack_radius": 16.0
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 1
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 2,
+        "within_radius": 20.0,
+        "reselect_targets": true,
+        "must_see": true,
+        "entity_types": [
+          {
+            "filters": {
+              "any_of": [
+                { "test": "is_family", "subject": "other", "value": "zombie" },
+                { "test": "is_family", "subject": "other", "value": "skeleton" },
+                { "test": "is_family", "subject": "other", "value": "creeper" },
+                { "test": "is_family", "subject": "other", "value": "spider" },
+                { "test": "is_family", "subject": "other", "value": "enderman" },
+                { "test": "is_family", "subject": "other", "value": "phantom" },
+                { "test": "is_family", "subject": "other", "value": "pillager" },
+                { "test": "is_family", "subject": "other", "value": "blaze" },
+                { "test": "is_family", "subject": "other", "value": "witch" },
+                { "test": "is_family", "subject": "other", "value": "ravager" }
+              ]
+            },
+            "max_dist": 20
+          }
+        ]
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 8,
+        "look_distance": 6.0,
+        "probability": 0.02
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 9,
+        "speed_multiplier": 1.0
+      },
+      "minecraft:behavior.look_at_entity": {
+        "priority": 10,
+        "look_distance": 8.0,
+        "probability": 0.02,
+        "filters": {
+          "test": "is_family",
+          "subject": "other",
+          "value": "mob"
+        }
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 10
+      }
+    },
+    "events": {}
+  }
+}

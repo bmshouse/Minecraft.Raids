@@ -15,6 +15,9 @@ import { PlayerBookInitializer } from "./core/initialization/PlayerBookInitializ
 import { PlayerBookService } from "./core/features/PlayerBookService";
 import { WolfLevelingService } from "./core/features/WolfLevelingService";
 import { WolfLevelingInitializer } from "./core/initialization/WolfLevelingInitializer";
+import { VillageGuardWolfService } from "./core/features/village/VillageGuardWolfService";
+import { VillageDefenseService } from "./core/features/village/VillageDefenseService";
+import { VillageDefenseInitializer } from "./core/initialization/VillageDefenseInitializer";
 import type { IInitializer } from "./core/initialization/IInitializer";
 
 // Import GameTest files to register them
@@ -23,6 +26,7 @@ import "./gametests/MessageProviderGameTest";
 import "./gametests/PlayerListGameTest";
 import "./gametests/RaidPartyGameTest";
 import "./gametests/WolfLevelingGameTest";
+import "./gametests/VillageGuardWolfGameTest";
 
 /**
  * Initializes all pack systems
@@ -34,11 +38,16 @@ function initializePack(): void {
   const playerBookService = new PlayerBookService(messageProvider);
   const wolfLevelingService = new WolfLevelingService(messageProvider);
 
+  // Village defense system
+  const guardWolfService = new VillageGuardWolfService();
+  const villageDefenseService = new VillageDefenseService(guardWolfService);
+
   // Create initializers
   const initializers: IInitializer[] = [
     new WelcomeInitializer(messageProvider),
     new PlayerBookInitializer(playerBookService),
     new WolfLevelingInitializer(wolfLevelingService),
+    new VillageDefenseInitializer(villageDefenseService),
   ];
 
   // Execute all initializers
