@@ -35,15 +35,16 @@ describe("MessageProvider", () => {
       expect(message).toEqual({ translate: "non.existent.key" });
     });
 
-    it("should ignore fallback parameter and use translate for non-overridden keys", () => {
+    it("should use fallback parameter when provided", () => {
       const message = provider.getMessage("non.existent.key", "Default message");
-      // Fallback parameter is not used with .lang file translation
-      expect(message).toEqual({ translate: "non.existent.key" });
+      // Fallback parameter is used for dynamic content
+      expect(message).toEqual({ text: "Default message" });
     });
 
-    it("should return RawMessage with translate even if fallback provided for valid key", () => {
+    it("should use fallback over translate when fallback is provided", () => {
       const message = provider.getMessage("mc.raids.welcome", "Fallback");
-      expect(message).toEqual({ translate: "mc.raids.welcome" });
+      // When fallback is provided, it takes precedence (for dynamic content like counts)
+      expect(message).toEqual({ text: "Fallback" });
     });
   });
 

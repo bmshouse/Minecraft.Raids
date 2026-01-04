@@ -25,21 +25,27 @@ export class MessageProvider implements IMessageProvider {
    * Flow:
    * 1. Check if there's a runtime override for this key
    * 2. If yes, return it as literal text (RawMessage with text property)
-   * 3. If no, return RawMessage with translate property
+   * 3. If fallback is provided, use it (for messages with dynamic content like counts/names)
+   * 4. Otherwise, return RawMessage with translate property
    *    - Minecraft client looks up the key in .lang file based on player's language
    *    - If key not found, displays the key itself as fallback
    *
    * @param key - The message key to look up in the .lang file
-   * @param _fallback - Not used; kept for interface compatibility. .lang file handles fallback via key display.
-   * @returns RawMessage that the client translates
+   * @param fallback - Optional pre-formatted message text (used for dynamic content)
+   * @returns RawMessage that the client translates or displays as text
    */
-  public getMessage(key: string, _fallback?: string): RawMessage {
+  public getMessage(key: string, fallback?: string): RawMessage {
     // Check if there's a runtime override for this key
     if (this.messageOverrides[key]) {
       return { text: this.messageOverrides[key] };
     }
 
-    // Use .lang file translation
+    // If fallback is provided, use it directly (for messages with dynamic content)
+    if (fallback !== undefined) {
+      return { text: fallback };
+    }
+
+    // Use .lang file translation for static messages
     // The translate property tells Minecraft to look up this key in the .lang file
     return { translate: key };
   }

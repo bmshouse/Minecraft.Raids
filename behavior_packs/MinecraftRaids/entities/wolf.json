@@ -385,6 +385,42 @@
         "minecraft:scale": {
           "value": 1.3
         }
+      },
+      "minecraftraids:wolf_guard": {
+        "minecraft:health": {
+          "value": 20,
+          "max": 20
+        },
+        "minecraft:attack": {
+          "damage": 4
+        },
+        "minecraft:scale": {
+          "value": 1.0
+        }
+      },
+      "minecraftraids:wolf_tank": {
+        "minecraft:health": {
+          "value": 30,
+          "max": 30
+        },
+        "minecraft:attack": {
+          "damage": 2
+        },
+        "minecraft:scale": {
+          "value": 1.15
+        }
+      },
+      "minecraftraids:wolf_dps": {
+        "minecraft:health": {
+          "value": 15,
+          "max": 15
+        },
+        "minecraft:attack": {
+          "damage": 8
+        },
+        "minecraft:scale": {
+          "value": 0.9
+        }
       }
     },
     "components": {
@@ -654,6 +690,21 @@
         },
         "add": {
           "component_groups": ["minecraft:wolf_level_1"]
+        }
+      },
+      "minecraftraids:become_guard": {
+        "add": {
+          "component_groups": ["minecraftraids:wolf_guard"]
+        }
+      },
+      "minecraftraids:become_tank": {
+        "add": {
+          "component_groups": ["minecraftraids:wolf_tank"]
+        }
+      },
+      "minecraftraids:become_dps": {
+        "add": {
+          "component_groups": ["minecraftraids:wolf_dps"]
         }
       }
     }

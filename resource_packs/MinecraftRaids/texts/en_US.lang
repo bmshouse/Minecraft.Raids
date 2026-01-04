@@ -10,18 +10,22 @@ mc.raids.welcome=- Minecraft Raids -
 mc.raids.initialized=You are ready to explore and dominate
 mc.raids.version=v1.0.0
 mc.raids.description=A raid management behavior pack for Minecraft Bedrock Edition
+mc.raids.starting.resources=You've been given 15 emeralds to start your raid party!
 
 ###Minecraft Raids - Book Table of Contents
 mc.raids.book.title=Minecraft Raids Guide
 mc.raids.book.body=Select a section to view:
-mc.raids.book.section.playerlist=Player List
-mc.raids.book.section.raidparty=Raid Party
-mc.raids.book.section.stats=Stats
+mc.raids.book.section.leaderboard=Wealth Leaderboard
+mc.raids.book.section.raidparty=Raid Party Management
+mc.raids.book.section.recruit=Recruit Units
+mc.raids.book.section.managearmy=Discharge Units
 
-###Minecraft Raids - Player List Messages
-mc.raids.playerlist.title=Server Players
-mc.raids.playerlist.body=Currently online players:
-mc.raids.playerlist.noplayers=No players online
+###Minecraft Raids - Wealth Leaderboard Messages
+mc.raids.leaderboard.title=Wealth Leaderboard
+mc.raids.leaderboard.body=Players ranked by total emerald wealth:
+mc.raids.leaderboard.noplayers=No players online
+
+###Minecraft Raids - Player List Messages (kept for backwards compatibility)
 mc.raids.playerlist.received=You received a Player Directory!
 
 ###Minecraft Raids - Raid Party Section
@@ -41,7 +45,112 @@ mc.raids.wolf.level3=Elite Wolf
 mc.raids.wolf.kills=Kills:
 mc.raids.wolf.nextlevel=Next level:
 
+###Minecraft Raids - Recruitment Messages
+mc.raids.recruit.title=Recruit Units
+mc.raids.recruit.body=Select a unit to recruit for your party:
+mc.raids.recruit.insufficient=Not enough resources! Cost: %s
+mc.raids.recruit.success=Recruited %s!
+mc.raids.recruit.spawn.failed=Failed to spawn unit: %s
+mc.raids.recruit.deduct.failed=Failed to deduct resources!
+mc.raids.sell.success=Sold %s! Refunded: %s
+mc.raids.sell.notowner=You don't own this unit!
+mc.raids.sell.unknown=Unknown unit type!
+
+###Minecraft Raids - Unit Pocket Messages
+mc.raids.pocket.notowner=You don't own this unit!
+mc.raids.pocket.full=Unit pocket is full! (75 max)
+mc.raids.pocket.success=Pocketed %s!
+mc.raids.pocket.failed=Failed to pocket unit: %s
+mc.raids.pocket.invalidindex=Invalid unit index!
+mc.raids.pocket.chunkfail=Chunk not loaded! Move closer.
+mc.raids.pocket.released=Released %s!
+mc.raids.pocket.releasefailed=Failed to release: %s
+mc.raids.pocket.noactive=No active units to pocket!
+mc.raids.pocket.allpocketed=Pocketed %s units!
+mc.raids.pocket.nopocketed=No pocketed units!
+mc.raids.pocket.allreleased=Released %s units!
+
+###Minecraft Raids - Village Compass Messages
+mc.raids.compass.name=Village Compass
+mc.raids.compass.received=You received a Village Compass!
+mc.raids.compass.novillages=No unconquered villages nearby
+mc.raids.compass.explore=Explore %s for new villages
+
+###Minecraft Raids - Village Discovery Messages
+mc.raids.village.discovered_command=Village discovered via compass! %sm away
+mc.raids.village.discovered_entity=New village discovered! %sm away
+
+###Minecraft Raids - Player Book Villages Section
+mc.raids.book.section.villages=Discovered Villages
+mc.raids.book.villages.title=Discovered Villages
+mc.raids.book.villages.body=Total discovered: %s
+mc.raids.book.villages.none=No villages discovered yet. Explore to find them!
+mc.raids.book.villages.ready=§aReady
+mc.raids.book.villages.cooldown=§cCooldown
+
 ###Minecraft Raids - Village Defense Entity Names
 entity.minecraftraids:village_guard_wolf.name=Village Guard Wolf
-entity.minecraftraids:village_guard_pillager.name=Village Guard
+entity.minecraftraids:village_guard_pillager.name=Village Guard Pillager
+entity.minecraftraids:village_guard_vindicator.name=Village Guard Vindicator
 entity.minecraftraids:village_defense_iron_golem.name=Village Defense Iron Golem
+
+###Minecraft Raids - Error Messages
+mc.raids.error.raidparty=Error loading raid party. Check content log for details.
+mc.raids.error.recruitment=Recruitment system not initialized!
+mc.raids.error.unitpocket=Unit Pocket system not initialized!
+mc.raids.error.invalidunit=Invalid unit!
+
+###Minecraft Raids - Unit Pocket UI
+mc.raids.pocket.title=Manage Active Units
+mc.raids.pocket.nounits=You have no raid units!
+
+###Minecraft Raids - Manage Army Section
+mc.raids.managearmy.title=Discharge Units
+mc.raids.managearmy.body=Select a unit type to discharge:
+mc.raids.managearmy.nounits=You don't have any units to discharge
+mc.raids.managearmy.sold=Sold
+mc.raids.managearmy.replacement.success=Replaced with pocketed unit!
+mc.raids.managearmy.replacement.failed=Could not spawn replacement - chunk not loaded. Unit remains pocketed.
+
+###Minecraft Raids - Additional Messages
+mc.raids.unit.team_swap= §6(Team Swap)§r
+mc.raids.unit.release_failed=§cSome units failed to release: %s
+mc.raids.unit.remove_failed=§cFailed to remove pocketed unit!
+mc.raids.unit.sell_price=for %s emeralds!
+mc.raids.village.cooldown=§cVillage on cooldown! Wait %s
+mc.raids.village.conquered=§a§lVILLAGE CONQUERED! §r§7+%s emeralds
+mc.raids.currency.emeralds=emeralds
+mc.raids.recruitment.deduct_failed=Failed to deduct resources!
+
+###Minecraft Raids - Resource Display Messages
+mc.raids.resources.display=Resources: %s emeralds
+
+###Minecraft Raids - Enhanced Pocket/Release Messages
+mc.raids.pocket.partial.pocket=Pocketed %s of %s units. Some failed: %s
+mc.raids.pocket.partial.release=Released %s of %s units. Some failed: %s
+mc.raids.pocket.partialfail=Operation completed with errors. Check messages above.
+
+###Minecraft Raids - Raid Party UI
+mc.raids.raidparty.pocketall=§6Pocket All (%s units)§r
+mc.raids.raidparty.releaseall=§6Release All (%s units)§r
+mc.raids.raidparty.active=[Active]
+mc.raids.raidparty.pocketed=[Pocketed]
+mc.raids.raidparty.hp=HP
+mc.raids.raidparty.teamswap=§6Team Swap§r
+mc.raids.raidparty.releasefailed=§cSome units failed to release: %s
+mc.raids.raidparty.pocketed.units=§aPocketed %s unit(s)
+mc.raids.raidparty.released.units=§aReleased %s unit(s)
+
+###Minecraft Raids - Manage Army Extended
+mc.raids.managearmy.sellbutton=%s (Owned: %s) - Sell for %s
+mc.raids.managearmy.sellfailed=§cFailed to sell pocketed unit: %s
+mc.raids.managearmy.removefailed=§cFailed to remove pocketed unit!
+mc.raids.managearmy.soldall=Sold all
+
+###Minecraft Raids - Compass Navigation
+mc.raids.compass.pointsto=§aCompass now points to:
+mc.raids.compass.distance= §f%sm %s
+
+###Minecraft Raids - Unit Display
+mc.raids.unit.costlabel= -
+mc.raids.unit.emeralds= emeralds

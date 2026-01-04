@@ -4,9 +4,15 @@
  */
 
 import * as gametest from "@minecraft/server-gametest";
-import { EntityComponentTypes, EntityTameableComponent, EntityHealthComponent, EntityQueryOptions } from "@minecraft/server";
+import {
+  EntityComponentTypes,
+  EntityTameableComponent,
+  EntityHealthComponent,
+  EntityQueryOptions,
+} from "@minecraft/server";
 import { MessageProvider } from "../core/messaging/MessageProvider";
 import { PlayerBookService } from "../core/features/PlayerBookService";
+import { GameTestTimeouts } from "./GameTestConstants";
 
 /**
  * Test that wolves can be spawned and have tameable component
@@ -19,7 +25,9 @@ export function wolfTamingTest(test: gametest.Test) {
   wolf.triggerEvent("minecraft:entity_spawned");
 
   // Get tameable component
-  const tameable = wolf.getComponent(EntityComponentTypes.Tameable) as EntityTameableComponent | undefined;
+  const tameable = wolf.getComponent(EntityComponentTypes.Tameable) as
+    | EntityTameableComponent
+    | undefined;
 
   test.assert(tameable !== undefined, "Wolf should have Tameable component");
   test.assert(!tameable?.isTamed, "Wolf should start untamed");
@@ -34,7 +42,9 @@ export function wolfTamingTest(test: gametest.Test) {
 
   // Schedule check after taming
   test.runAtTickTime(10, () => {
-    const tameableAfter = wolf.getComponent(EntityComponentTypes.Tameable) as EntityTameableComponent | undefined;
+    const tameableAfter = wolf.getComponent(EntityComponentTypes.Tameable) as
+      | EntityTameableComponent
+      | undefined;
     test.assert(tameableAfter?.isTamed === true, "Wolf should be tamed after event");
     test.succeed();
   });
@@ -69,12 +79,17 @@ export function wolfHealthTest(test: gametest.Test) {
   const wolf = test.spawn("minecraft:wolf", { x: 0, y: 0, z: 0 });
 
   // Get health component
-  const health = wolf.getComponent(EntityComponentTypes.Health) as EntityHealthComponent | undefined;
+  const health = wolf.getComponent(EntityComponentTypes.Health) as
+    | EntityHealthComponent
+    | undefined;
 
   test.assert(health !== undefined, "Wolf should have Health component");
   test.assert(health?.currentValue !== undefined, "Wolf health should have current value");
   test.assert(health?.defaultValue !== undefined, "Wolf health should have default value");
-  test.assert(health?.currentValue === health?.defaultValue, "Newly spawned wolf should be at full health");
+  test.assert(
+    health?.currentValue === health?.defaultValue,
+    "Newly spawned wolf should be at full health"
+  );
 
   test.succeed();
 }
@@ -85,7 +100,15 @@ export function wolfHealthTest(test: gametest.Test) {
  */
 export function playerBookServiceTest(test: gametest.Test) {
   const messageProvider = new MessageProvider();
-  void new PlayerBookService(messageProvider);
+  void new PlayerBookService(
+    messageProvider,
+    null as any, // resourceService - not needed for construction test
+    null as any, // recruitmentService - not needed for construction test
+    null as any, // unitPocketService - not needed for construction test
+    null as any, // wealthCalculationService - not needed for construction test
+    null as any, // villageCache - not needed for construction test
+    null as any // conquestTracker - not needed for construction test
+  );
 
   // Service initialized successfully
   test.succeed();
@@ -98,7 +121,11 @@ export function playerBookServiceTest(test: gametest.Test) {
 export function raidPartyMessagesTest(test: gametest.Test) {
   const messageProvider = new MessageProvider();
 
-  const requiredKeys = ["mc.raids.raidparty.title", "mc.raids.raidparty.header", "mc.raids.raidparty.noentities"];
+  const requiredKeys = [
+    "mc.raids.raidparty.title",
+    "mc.raids.raidparty.header",
+    "mc.raids.raidparty.noentities",
+  ];
 
   for (const key of requiredKeys) {
     const message = messageProvider.getMessage(key);
@@ -114,35 +141,35 @@ export function raidPartyMessagesTest(test: gametest.Test) {
 // Register all tests
 gametest
   .register("MinecraftRaids", "wolfTaming", wolfTamingTest)
-  .maxTicks(20)
+  .maxTicks(GameTestTimeouts.SHORT)
   .structureName("MinecraftRaids:simple")
   .tag("suite:raidparty")
   .tag("batch");
 
 gametest
   .register("MinecraftRaids", "wolfQuery", wolfQueryTest)
-  .maxTicks(20)
+  .maxTicks(GameTestTimeouts.SHORT)
   .structureName("MinecraftRaids:simple")
   .tag("suite:raidparty")
   .tag("batch");
 
 gametest
   .register("MinecraftRaids", "wolfHealth", wolfHealthTest)
-  .maxTicks(10)
+  .maxTicks(GameTestTimeouts.QUICK)
   .structureName("MinecraftRaids:simple")
   .tag("suite:raidparty")
   .tag("batch");
 
 gametest
   .register("MinecraftRaids", "playerBookService", playerBookServiceTest)
-  .maxTicks(10)
+  .maxTicks(GameTestTimeouts.QUICK)
   .structureName("MinecraftRaids:simple")
   .tag("suite:raidparty")
   .tag("batch");
 
 gametest
   .register("MinecraftRaids", "raidPartyMessages", raidPartyMessagesTest)
-  .maxTicks(100)
+  .maxTicks(GameTestTimeouts.STANDARD)
   .structureName("MinecraftRaids:simple")
   .tag("suite:raidparty")
   .tag("batch");

@@ -5,6 +5,7 @@
 
 import * as gametest from "@minecraft/server-gametest";
 import { MessageProvider } from "../core/messaging/MessageProvider";
+import { GameTestTimeouts } from "./GameTestConstants";
 
 /**
  * Test that MessageProvider works correctly in-game
@@ -57,7 +58,7 @@ export function messageProviderTest(test: gametest.Test) {
 // Register the GameTest
 gametest
   .register("MinecraftRaids", "messageProvider", messageProviderTest)
-  .maxTicks(50)
+  .maxTicks(GameTestTimeouts.FAST)
   .structureName("MinecraftRaids:simple")
   .tag("suite:default")
   .tag("batch");

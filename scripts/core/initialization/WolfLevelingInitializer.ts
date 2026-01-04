@@ -35,9 +35,9 @@ export class WolfLevelingInitializer implements IInitializer {
       return;
     }
 
-    const tameable = killer.getComponent(
-      EntityComponentTypes.Tameable
-    ) as EntityTameableComponent | undefined;
+    const tameable = killer.getComponent(EntityComponentTypes.Tameable) as
+      | EntityTameableComponent
+      | undefined;
     if (!tameable?.isTamed) {
       return; // Only tamed wolves earn XP
     }
@@ -52,9 +52,7 @@ export class WolfLevelingInitializer implements IInitializer {
 
     if (leveledUp) {
       // Level-up notification already sent by service
-      console.warn(
-        `[WolfLeveling] Wolf ${killer.id} leveled up after killing ${victim.typeId}`
-      );
+      console.warn(`[WolfLeveling] Wolf ${killer.id} leveled up after killing ${victim.typeId}`);
     }
   }
 }

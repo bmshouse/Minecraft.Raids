@@ -29,3 +29,6 @@ coverage/
 worlds/
 backups/
 reference/
+
+# Generated manifest (built from manifest.prod.json or manifest.dev.json)
+**/behavior_packs/*/manifest.json

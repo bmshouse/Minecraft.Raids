@@ -4,6 +4,7 @@
  */
 
 import * as gametest from "@minecraft/server-gametest";
+import { GameTestTimeouts } from "./GameTestConstants";
 
 /**
  * Test that the welcome initialization system executes
@@ -19,7 +20,7 @@ export function welcomeMessageTest(test: gametest.Test) {
 // Register the GameTest
 gametest
   .register("MinecraftRaids", "welcomeMessage", welcomeMessageTest)
-  .maxTicks(100)
+  .maxTicks(GameTestTimeouts.STANDARD)
   .structureName("MinecraftRaids:simple")
   .tag("suite:default")
   .tag("batch");

@@ -7,6 +7,7 @@ import * as gametest from "@minecraft/server-gametest";
 import { MessageProvider } from "../core/messaging/MessageProvider";
 import { PlayerBookInitializer } from "../core/initialization/PlayerBookInitializer";
 import { PlayerBookService } from "../core/features/PlayerBookService";
+import { GameTestTimeouts } from "./GameTestConstants";
 
 /**
  * Test that PlayerBookInitializer initializes without errors
@@ -14,7 +15,15 @@ import { PlayerBookService } from "../core/features/PlayerBookService";
  */
 export function playerBookInitializerSubscribesTest(test: gametest.Test) {
   const messageProvider = new MessageProvider();
-  const playerBookService = new PlayerBookService(messageProvider);
+  const playerBookService = new PlayerBookService(
+    messageProvider,
+    null as any, // resourceService - not needed for construction test
+    null as any, // recruitmentService - not needed for construction test
+    null as any, // unitPocketService - not needed for construction test
+    null as any, // wealthCalculationService - not needed for construction test
+    null as any, // villageCache - not needed for construction test
+    null as any // conquestTracker - not needed for construction test
+  );
   const initializer = new PlayerBookInitializer(playerBookService);
 
   // Should not throw
@@ -66,14 +75,14 @@ export function bookNavigationMessagesExistTest(test: gametest.Test) {
 // Register the GameTests
 gametest
   .register("MinecraftRaids", "playerBookInitializer", playerBookInitializerSubscribesTest)
-  .maxTicks(100)
+  .maxTicks(GameTestTimeouts.STANDARD)
   .structureName("MinecraftRaids:simple")
   .tag("suite:default")
   .tag("batch");
 
 gametest
   .register("MinecraftRaids", "bookNavigationMessages", bookNavigationMessagesExistTest)
-  .maxTicks(100)
+  .maxTicks(GameTestTimeouts.STANDARD)
   .structureName("MinecraftRaids:simple")
   .tag("suite:default")
   .tag("batch");

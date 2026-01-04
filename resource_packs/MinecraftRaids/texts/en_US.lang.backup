@@ -1,0 +1,162 @@
+##Version of this file
+##2
+
+###Language Settings
+language.name=English
+language.region=United States
+
+###Minecraft Raiders - Welcome Messages
+mc.raiders.welcome=- Minecraft Raiders -
+mc.raiders.initialized=You are ready to explore and dominate
+mc.raiders.version=v1.0.0
+mc.raiders.description=A raid management behavior pack for Minecraft Bedrock Edition
+mc.raiders.starting.resources=You've been given 15 emeralds to start your raid party!
+
+###Minecraft Raiders - Book Table of Contents
+mc.raiders.book.title=Minecraft Raiders Guide
+mc.raiders.book.body=Select a section to view:
+mc.raiders.book.section.leaderboard=Wealth Leaderboard
+mc.raiders.book.section.raidparty=Raid Party Management
+mc.raiders.book.section.recruit=Recruit Units
+mc.raiders.book.section.managearmy=Discharge Units
+mc.raiders.book.section.raidcamps=Raid Camps
+
+###Minecraft Raiders - Wealth Leaderboard Messages
+mc.raiders.leaderboard.title=Wealth Leaderboard
+mc.raiders.leaderboard.body=Players ranked by total emerald wealth:
+mc.raiders.leaderboard.noplayers=No players online
+
+###Minecraft Raiders - Player List Messages (Deprecated - kept for backwards compatibility)
+mc.raiders.playerlist.title=Wealth Leaderboard
+mc.raiders.playerlist.body=Players ranked by total emerald wealth:
+mc.raiders.playerlist.noplayers=No players online
+mc.raiders.playerlist.received=You received a Player Directory!
+
+###Minecraft Raiders - Raid Party Section
+mc.raiders.raidparty.title=Raid Party
+mc.raiders.raidparty.header=Your Raid Party:
+mc.raiders.raidparty.noentities=No members in your raid party
+
+###Minecraft Raiders - Raid Camps Section
+mc.raiders.raidcamps.title=Nearby Raid Camps
+
+###Minecraft Raiders - Recruit Units Section
+mc.raiders.recruit.title=Recruit Units
+mc.raiders.recruit.body=Select a unit to recruit for your party:
+
+###Minecraft Raiders - Manage Party Section
+mc.raiders.managearmy.title=Discharge Units
+mc.raiders.managearmy.body=Select a unit type to discharge:
+mc.raiders.managearmy.nounits=You don't have any units to discharge
+mc.raiders.managearmy.sold=Sold
+mc.raiders.managearmy.replacement.success=Replaced with pocketed unit!
+mc.raiders.managearmy.replacement.failed=Could not spawn replacement - chunk not loaded. Unit remains pocketed.
+
+###Minecraft Raiders - Wolf Leveling Messages
+mc.raiders.wolf.levelup=Your wolf leveled up to Level
+mc.raiders.wolf.level1=Guard Wolf
+mc.raiders.wolf.level2=Veteran Wolf
+mc.raiders.wolf.level3=Elite Wolf
+mc.raiders.wolf.kills=Kills:
+mc.raiders.wolf.nextlevel=Next level:
+
+###Minecraft Raiders - Raid Unit Entity Names
+entity.minecraftraids:raid_wolf.name=Raid Wolf
+entity.minecraftraids:raid_pillager.name=Raid Pillager
+entity.minecraftraids:raid_vindicator.name=Raid Vindicator
+entity.minecraftraids:raid_iron_golem.name=Raid Iron Golem
+
+###Minecraft Raiders - Camp Defender Entity Names
+entity.minecraftraids:camp_defender_zombie_villager.name=Camp Defender
+entity.minecraftraids:camp_defender_pillager.name=Camp Defender
+entity.minecraftraids:camp_defender_vindicator.name=Camp Raider
+entity.minecraftraids:camp_defender_iron_golem.name=Camp Guardian
+entity.minecraftraids:camp_defender_evoker.name=Camp Sorcerer
+entity.minecraftraids:camp_defender_ravager.name=Camp Ravager
+
+###Minecraft Raiders - Resource Display Messages
+mc.raiders.resources.display=Resources: %s emeralds
+
+###Minecraft Raiders - Camp Messages
+mc.raiders.camp.conquered=Camp Conquered! Rewards: 
+mc.raiders.camp.cooldown=Cooldown: 10 minutes before you can re-conquer this camp
+
+###Minecraft Raiders - Raid Camps Display
+mc.raiders.raidcamps.nocamps=No raid camps found nearby.\n\nTravel further from spawn to find camps!
+mc.raiders.raidcamps.header=Nearest Raid Camps:
+mc.raiders.raidcamps.conquered=This camp is on cooldown!
+
+###Minecraft Raiders - Camp Tier Names
+mc.raiders.camp.starter=Starter Camp
+mc.raiders.camp.tier1=Easy Camp
+mc.raiders.camp.tier2=Medium Camp
+mc.raiders.camp.tier3=Hard Camp
+mc.raiders.camp.tier4=Very Hard Camp
+mc.raiders.camp.tier5=Elite Camp
+mc.raiders.camp.unknown=Unknown Camp
+
+###Minecraft Raiders - Recruitment Messages
+mc.raiders.recruit.insufficient=Not enough resources! Cost: %s
+mc.raiders.recruit.deduct.failed=Failed to deduct resources!
+mc.raiders.recruit.success=Recruited %s!
+mc.raiders.recruit.spawn.failed=Failed to spawn unit: %s
+
+###Minecraft Raiders - Selling Messages
+mc.raiders.sell.notowner=You don't own this unit!
+mc.raiders.sell.unknown=Unknown unit type!
+mc.raiders.sell.success=Sold %s! Refunded: %s
+
+###Minecraft Raiders - Raid Party Management Messages
+mc.raiders.managearmy.soldall=Sold all
+
+###Minecraft Raiders - Compass Messages
+mc.raiders.compass.name=Raid Camp Compass
+mc.raiders.compass.received=You received a Raid Camp Compass! Hold it to see nearby camps.
+mc.raiders.compass.nocamps=No unconquered camps nearby - travel further!
+
+###Minecraft Raiders - Error Messages
+mc.raiders.error.raidparty=Error loading raid party. Check content log for details.
+
+###Minecraft Raiders - Unit Pocket/Release
+mc.raiders.pocket.title=Manage Active Units
+mc.raiders.pocket.manage=Manage Active/Inactive Units
+mc.raiders.pocket.nounits=You have no raid units!
+mc.raiders.pocket.success=Pocketed
+mc.raiders.pocket.released=Released
+mc.raiders.pocket.full=Pocket is full! (Max 75 units)
+mc.raiders.pocket.chunkfail=Cannot release - chunk not loaded. Move closer and try again.
+mc.raiders.pocket.allpocketed=Pocketed all %s units!
+mc.raiders.pocket.allreleased=Released all %s units!
+mc.raiders.pocket.partialfail=Operation completed with errors. Check messages above.
+mc.raiders.pocket.notowner=You don't own this unit!
+mc.raiders.pocket.invalidindex=Invalid unit index!
+mc.raiders.pocket.noactive=No active units to pocket!
+mc.raiders.pocket.nopocketed=No pocketed units to release!
+mc.raiders.pocket.failed=Failed to pocket unit: %s
+mc.raiders.pocket.releasefailed=Failed to release unit: %s
+mc.raiders.pocket.partial.pocket=Pocketed %s of %s units. Some failed: %s
+mc.raiders.pocket.partial.release=Released %s of %s units. Some failed: %s
+
+###Minecraft Raiders - Raid Party UI
+mc.raiders.raidparty.pocketall=§6Pocket All (%s units)§r
+mc.raiders.raidparty.releaseall=§6Release All (%s units)§r
+mc.raiders.raidparty.active=[Active]
+mc.raiders.raidparty.pocketed=[Pocketed]
+mc.raiders.raidparty.hp=HP
+mc.raiders.raidparty.teamswap=§6Team Swap§r
+mc.raiders.raidparty.releasefailed=§cSome units failed to release: %s
+mc.raiders.raidparty.pocketed.units=§aPocketed %s unit(s)
+mc.raiders.raidparty.released.units=§aReleased %s unit(s)
+
+###Minecraft Raiders - Manage Army
+mc.raiders.managearmy.sellbutton=%s (Owned: %s) - Sell for %s
+mc.raiders.managearmy.sellfailed=§cFailed to sell pocketed unit: %s
+mc.raiders.managearmy.removefailed=§cFailed to remove pocketed unit!
+
+###Minecraft Raiders - Compass Navigation
+mc.raiders.compass.pointsto=§aCompass now points to:
+mc.raiders.compass.distance= §f%sm %s
+
+###Minecraft Raiders - Unit Display
+mc.raiders.unit.costlabel= -
+mc.raiders.unit.emeralds= emeralds
