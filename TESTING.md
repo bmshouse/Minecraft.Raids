@@ -11,19 +11,44 @@ Testing Strategy for Minecraft Raids:
 
 ## Unit Tests (Vitest)
 
+### Test Coverage Summary
+
+The project includes **189 unit tests** across **9 test files**, providing comprehensive coverage of pure TypeScript logic:
+
+| Test File | Tests | Focus Area |
+|-----------|-------|------------|
+| **MessageProvider.test.ts** | 9 | i18n message system, fallbacks |
+| **VillageCache.test.ts** | 14 | Village caching, clustering algorithms |
+| **DistanceUtils.test.ts** | 20 | 2D/3D distance calculations |
+| **DynamicPropertyKeys.test.ts** | 28 | Key generation, collision prevention |
+| **CostFormatter.test.ts** | 20 | Cost formatting, pluralization |
+| **ProgressionBasedDifficultyCalculator.test.ts** | 21 | Difficulty tiers, progression scaling |
+| **PlayerPowerCalculator.test.ts** | 25 | Equipment scoring, party size, tiers |
+| **WealthCalculationService.test.ts** | 19 | Wealth tracking, unit values, sorting |
+| **UnitDefinitions.test.ts** | 33 | Unit data validation, sell prices |
+| **TOTAL** | **189** | Pure logic without Minecraft APIs |
+
 ### What Gets Unit Tested
 
-- **MessageProvider**: Message retrieval and fallback logic
-- Pure business logic without Minecraft API dependencies
-- Fast, isolated, run offline
+- **Message System**: i18n message retrieval and fallback logic
+- **Utility Functions**: Distance calculations, key generation, formatting
+- **Calculation Services**: Wealth, power, difficulty calculations
+- **Data Structures**: Unit definitions, constants validation
+- **Business Rules**: Sorting algorithms, tier classification
+- **Edge Cases**: Boundary values, error conditions
+- Pure TypeScript logic without Minecraft API dependencies
+- Fast, isolated, can run offline and in CI/CD
 
 ### Running Unit Tests
 
 ```bash
-npm test              # Run all unit tests once
-npm test:watch       # Run tests in watch mode
-npm test:ui          # Run tests with interactive UI dashboard
+npm test                     # Run all 189 unit tests once
+npm test:watch              # Run tests in watch mode (auto-run on save)
+npm test:ui                 # Interactive UI dashboard with coverage
+npm test -- <filename>      # Run specific test file
 ```
+
+**All tests pass in ~600ms** with comprehensive coverage of critical game logic.
 
 ### Example: MessageProvider Tests
 
@@ -96,16 +121,46 @@ If you need custom test structures:
 
 ## GameTest Framework
 
+### GameTest Coverage Summary
+
+The project includes **43 GameTests** across **13 test files**, validating all core gameplay systems:
+
+| Test File | Tests | Focus Area |
+|-----------|-------|------------|
+| **WelcomeGameTest.ts** | 1 | Welcome system initialization |
+| **MessageProviderGameTest.ts** | 1 | Message provider in-game functionality |
+| **PlayerListGameTest.ts** | 2 | Player list UI construction |
+| **RaidPartyGameTest.ts** | 4 | Raid party and wolf management |
+| **WolfLevelingGameTest.ts** | 6 | Wolf progression, stats, breeding |
+| **VillageDefenseIronGolemGameTest.ts** | 1 | Custom iron golem spawning |
+| **ResourceServiceGameTest.ts** | 6 | Resource management, emerald tracking |
+| **ResourceInitializerGameTest.ts** | 2 | Player spawn resource grants |
+| **RecruitmentServiceGameTest.ts** | 8 | Unit recruitment, ownership, selling |
+| **UnitPocketServiceGameTest.ts** | 8 | Unit storage, health preservation |
+| **VillageDiscoveryGameTest.ts** | 6 | Village caching, clustering, persistence |
+| **VillageRaidServiceGameTest.ts** | 9 | Village raid mechanics, state tracking |
+| **WealthCalculationGameTest.ts** | 4 | Wealth tracking with real entities |
+| **TOTAL** | **43** | Complete gameplay system validation |
+
 ### What Gets GameTest Tested
 
-- **WelcomeGameTest**: Welcome system initialization
-- **MessageProviderGameTest**: Provider functionality in-game
-- **PlayerListGameTest**: Player list UI validation
-- **RaidPartyGameTest**: Raid party system and wolf management
-- **WolfLevelingGameTest**: Wolf leveling progression and stat changes
-- Entity interactions
-- Block placement and behavior
-- Game mechanics
+**Core Systems:**
+- **Resource Management**: Emerald tracking, validation, persistence
+- **Recruitment System**: Unit spawning, cost deduction, ownership, wolf specializations
+- **Unit Pocket System**: Storage (75 unit max), health preservation, bulk operations
+- **Village Discovery**: Caching, 100-block clustering, conquest tracking
+- **Village Raids**: Activation, state management, victory detection
+- **Wealth Tracking**: Real-time calculation with active/pocketed units
+- **Wolf Leveling**: Progression (Levels 1-3), stat increases, breeding
+- **Message System**: In-game message delivery and formatting
+- **UI Systems**: Player list forms, book navigation
+
+**Integration Testing:**
+- Entity interactions (spawning, taming, health)
+- Dynamic property persistence
+- Multi-player scenarios
+- Real-time game mechanics
+- Component state validation
 
 ### Why GameTest?
 
