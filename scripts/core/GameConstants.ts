@@ -64,8 +64,9 @@ export const VillageDetection = {
   /**
    * Clustering radius in blocks - villages within this distance
    * are considered the same village to prevent duplicates
+   * Increased to 150 to detect villages before they're visually apparent (~40 blocks)
    */
-  CLUSTERING_RADIUS: 100,
+  CLUSTERING_RADIUS: 150,
 
   /**
    * Activation radius in blocks - distance at which defenders spawn

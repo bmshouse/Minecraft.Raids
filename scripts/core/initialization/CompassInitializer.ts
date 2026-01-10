@@ -28,6 +28,13 @@ export class CompassInitializer implements IInitializer {
       }
     });
 
+    // Handle compass right-click to show village list
+    world.afterEvents.itemUse.subscribe((event) => {
+      if (event.itemStack.typeId === "minecraft_raids:village_compass") {
+        this.compassService.showVillageSelectionUI(event.source);
+      }
+    });
+
     // Update compass every second for players holding it
     system.runInterval(() => {
       for (const player of world.getAllPlayers()) {

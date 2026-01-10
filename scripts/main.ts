@@ -31,6 +31,8 @@ import { EntityBasedVillageDetector } from "./core/features/village/EntityBasedV
 import { VillageDiscoveryCoordinator } from "./core/features/village/VillageDiscoveryCoordinator";
 import { ProgressionBasedDifficultyCalculator } from "./core/features/village/ProgressionBasedDifficultyCalculator";
 import { VillageDiscoveryInitializer } from "./core/initialization/VillageDiscoveryInitializer";
+import { DefenderRewardService } from "./core/features/rewards/DefenderRewardService";
+import { DefenderKillInitializer } from "./core/initialization/DefenderKillInitializer";
 import type { IInitializer } from "./core/initialization/IInitializer";
 
 /**
@@ -71,7 +73,18 @@ function initializePack(): void {
     playerPowerCalculator,
     villageCache
   );
-  const villageRaidService = new VillageRaidService(villageCache, difficultyCalculator);
+  const villageRaidService = new VillageRaidService(
+    villageCache,
+    difficultyCalculator,
+    messageProvider
+  );
+
+  // Defender reward system for per-kill emeralds
+  const defenderRewardService = new DefenderRewardService(
+    resourceService,
+    messageProvider,
+    villageRaidService
+  );
 
   // Player book with village tracking
   const playerBookService = new PlayerBookService(
@@ -79,9 +92,7 @@ function initializePack(): void {
     resourceService,
     recruitmentService,
     unitPocketService,
-    wealthCalculationService,
-    villageCache,
-    conquestTracker
+    wealthCalculationService
   );
 
   // Village compass navigation system (uses village cache)
@@ -98,12 +109,14 @@ function initializePack(): void {
     new PlayerBookInitializer(playerBookService),
     new WolfLevelingInitializer(wolfLevelingService),
     new VillageDiscoveryInitializer(discoveryCoordinator),
+    new DefenderKillInitializer(defenderRewardService, villageRaidService),
     new VillageDefenseInitializer(
       villageRaidService,
       conquestTracker,
       resourceService,
       messageProvider,
-      playerPowerCalculator
+      playerPowerCalculator,
+      defenderRewardService
     ),
     new CompassInitializer(compassNavigationService, messageProvider),
   ];

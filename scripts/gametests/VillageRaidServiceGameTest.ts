@@ -45,7 +45,7 @@ function createRaidService() {
     villageCache
   );
 
-  return new VillageRaidService(villageCache, difficultyCalculator);
+  return new VillageRaidService(villageCache, difficultyCalculator, messageProvider);
 }
 
 /**
@@ -172,7 +172,7 @@ export function villageRaidCacheIntegrationTest(test: gametest.Test) {
     villageCache
   );
 
-  const raidService = new VillageRaidService(villageCache, difficultyCalculator);
+  const raidService = new VillageRaidService(villageCache, difficultyCalculator, messageProvider);
 
   test.runAfterDelay(GameTestTiming.PLAYER_INIT, () => {
     // Verify cache has the village

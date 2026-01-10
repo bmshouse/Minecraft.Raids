@@ -6,6 +6,7 @@ import { ConquestTracker } from "../features/village/ConquestTracker";
 import type { IResourceService } from "../resources/IResourceService";
 import type { IPlayerPowerCalculator } from "../features/scaling/IPlayerPowerCalculator";
 import type { IMessageProvider } from "../messaging/IMessageProvider";
+import type { IDefenderRewardService } from "../features/rewards/IDefenderRewardService";
 
 /**
  * Initializer for the village raid attack system
@@ -28,7 +29,8 @@ export class VillageDefenseInitializer implements IInitializer {
     private readonly conquestTracker: ConquestTracker,
     private readonly resourceService: IResourceService,
     private readonly messageProvider: IMessageProvider,
-    private readonly playerPowerCalculator?: IPlayerPowerCalculator
+    private readonly playerPowerCalculator?: IPlayerPowerCalculator,
+    private readonly defenderRewardService?: IDefenderRewardService
   ) {}
 
   /**
@@ -103,12 +105,11 @@ export class VillageDefenseInitializer implements IInitializer {
           // Record conquest (starts cooldown)
           this.conquestTracker.recordConquest(nearestPlayer.id, villageKey);
 
-          // Notify player
-          const conquestMsg = this.messageProvider.getMessage(
-            "mc.raids.village.conquered",
-            reward.toString()
-          );
-          nearestPlayer.sendMessage(conquestMsg);
+          // Notify player - use translate + with for proper message template substitution
+          nearestPlayer.sendMessage({
+            translate: "mc.raids.village.conquered",
+            with: [reward.toString()],
+          });
 
           console.log(
             `[VillageRaid] Player ${nearestPlayer.name} conquered village ${villageKey} - rewarded ${reward} emeralds`
@@ -117,6 +118,10 @@ export class VillageDefenseInitializer implements IInitializer {
           // Schedule village reset after cooldown (15 minutes)
           system.runTimeout(() => {
             this.villageRaidService.resetVillage(villageKey);
+
+            // Clear defender reward tracking
+            this.defenderRewardService?.clearVillageRewards(villageKey);
+
             console.log(
               `[VillageRaid] Village ${villageKey} cooldown expired - defenders will respawn`
             );
@@ -128,21 +133,22 @@ export class VillageDefenseInitializer implements IInitializer {
 
   /**
    * Calculate emerald reward based on village tier and player power
-   * Base rewards: Tier 1 = 30, Tier 2 = 60, Tier 3 = 100
+   * Base rewards: Tier 1 = 18, Tier 2 = 36, Tier 3 = 60
    * Scaled by player power: 0.8x to 1.2x based on equipment and party
    */
   private calculateReward(player: Player, tier: number): number {
     // Get base reward from tier
+    // Reduced by 40% for better game balance
     let baseReward: number;
     switch (tier) {
       case 1:
-        baseReward = 30; // Light defense
+        baseReward = 18; // Light defense (was 30)
         break;
       case 2:
-        baseReward = 60; // Medium defense
+        baseReward = 36; // Medium defense (was 60)
         break;
       case 3:
-        baseReward = 100; // Heavy defense
+        baseReward = 60; // Heavy defense (was 100)
         break;
       default:
         baseReward = 0;

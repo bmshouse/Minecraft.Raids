@@ -1,9 +1,10 @@
-import { world, Vector3, Dimension, Player } from "@minecraft/server";
+import { world, Vector3, Dimension, Player, Entity } from "@minecraft/server";
 import { DefenseConfiguration, DefenseTier } from "./DefenseConfiguration";
 import { EntitySpawner } from "../../utils/EntitySpawner";
 import { VillageDetection } from "../../GameConstants";
 import type { IVillageCache } from "./IVillageCache";
 import type { IVillageDifficultyCalculator } from "./IVillageDifficultyCalculator";
+import type { IMessageProvider } from "../../messaging/IMessageProvider";
 
 /**
  * Represents a spawn attempt that failed due to unloaded chunk
@@ -48,7 +49,8 @@ export class VillageRaidService {
 
   constructor(
     private readonly villageCache: IVillageCache,
-    private readonly difficultyCalculator: IVillageDifficultyCalculator
+    private readonly difficultyCalculator: IVillageDifficultyCalculator,
+    private readonly messageProvider: IMessageProvider
   ) {}
 
   /**
@@ -103,6 +105,11 @@ export class VillageRaidService {
         location: villageLocation,
       };
       this.villageStates.set(key, state);
+
+      // Notify player of peaceful village (Tier 0)
+      if (tier === DefenseTier.None) {
+        this.notifyPeacefulVillage(player, key);
+      }
     }
 
     // Don't activate if already active or conquered
@@ -132,6 +139,7 @@ export class VillageRaidService {
     }
 
     const allFailedSpawns: FailedSpawn[] = [];
+    const villageKey = this.getLocationKey(state.location);
 
     // Spawn each entity type
     for (const entityConfig of config.entities) {
@@ -141,9 +149,12 @@ export class VillageRaidService {
         `[VillageRaid] ${entityConfig.entityType}: ${result.succeeded}/${result.attempted} spawned`
       );
 
-      // Track spawned defender IDs
+      // Track spawned defender IDs and tag with village key for reverse lookup
       for (const entity of result.entities) {
         state.defenderIds.push(entity.id);
+
+        // Tag defender with village key for kill attribution
+        entity.addTag(`minecraftraids:village_${villageKey}`);
       }
 
       allFailedSpawns.push(...result.failed);
@@ -253,5 +264,64 @@ export class VillageRaidService {
    */
   public getVillageState(key: string): VillageRaidState | undefined {
     return this.villageStates.get(key);
+  }
+
+  /**
+   * Get village key from defender entity tag
+   * Used by DefenderRewardService to identify which village a killed defender belongs to
+   * @param defender - The defender entity
+   * @returns Village key or null if not a defender
+   */
+  public getVillageKeyForDefender(defender: Entity): string | null {
+    const tags = defender.getTags();
+    const villageTag = tags.find((tag) => tag.startsWith("minecraftraids:village_"));
+
+    if (villageTag) {
+      return villageTag.replace("minecraftraids:village_", "");
+    }
+
+    return null;
+  }
+
+  /**
+   * Notify player they've entered a peaceful village (one-time per village per player)
+   */
+  private notifyPeacefulVillage(player: Player, villageKey: string): void {
+    const notificationKey = `minecraftraids:peaceful_${player.id}_${villageKey}`;
+    const alreadyNotified = world.getDynamicProperty(notificationKey);
+
+    if (alreadyNotified) {
+      return; // Already notified
+    }
+
+    player.sendMessage({
+      rawtext: [
+        { text: "§a" },
+        {
+          text:
+            this.messageProvider.getMessage(
+              "mc.raids.village.peaceful_discovered",
+              "Peaceful Village Discovered!"
+            ).text || "Peaceful Village Discovered!",
+        },
+      ],
+    });
+
+    player.sendMessage({
+      rawtext: [
+        { text: "§7" },
+        {
+          text:
+            this.messageProvider.getMessage(
+              "mc.raids.village.peaceful_explanation",
+              "This village is too close to spawn to have defenders. Explore farther to find hostile villages with emerald rewards!"
+            ).text ||
+            "This village is too close to spawn to have defenders. Explore farther to find hostile villages with emerald rewards!",
+        },
+      ],
+    });
+
+    // Mark as notified
+    world.setDynamicProperty(notificationKey, true);
   }
 }
