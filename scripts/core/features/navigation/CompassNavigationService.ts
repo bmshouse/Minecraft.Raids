@@ -1,4 +1,6 @@
 import type { Player } from "@minecraft/server";
+import { world } from "@minecraft/server";
+import { ActionFormData } from "@minecraft/server-ui";
 import type { IMessageProvider } from "../../messaging/IMessageProvider";
 import type { ICompassNavigationService, NearestVillageInfo } from "./ICompassNavigationService";
 import type { ConquestTracker } from "../village/ConquestTracker";
@@ -16,6 +18,8 @@ import { DistanceUtils } from "../../utils/DistanceUtils";
  * - Works even when chunks aren't loaded
  */
 export class CompassNavigationService implements ICompassNavigationService {
+  private readonly PLAYER_SELECTION_PREFIX = "minecraftraids:compass_target_";
+
   constructor(
     private readonly messageProvider: IMessageProvider,
     private readonly conquestTracker: ConquestTracker,
@@ -63,16 +67,41 @@ export class CompassNavigationService implements ICompassNavigationService {
   }
 
   /**
-   * Get compass target - currently just returns nearest unconquered village
-   * In future, could support manual village selection
+   * Get compass target - respects manual selection if valid
+   * Falls back to nearest unconquered if no selection or selection invalid
    */
   public getCompassTarget(player: Player): NearestVillageInfo | null {
+    // Check for manual selection first
+    const selectedKey = this.getSelectedVillage(player);
+    if (selectedKey) {
+      const allVillages = this.villageCache.getDiscoveredVillages();
+      const village = allVillages.find((v) => v.key === selectedKey);
+
+      // Validate: village exists and can be conquered
+      if (village && this.conquestTracker.canConquer(player.id, village.key)) {
+        const distance = DistanceUtils.calculateHorizontalDistance(
+          player.location,
+          village.location
+        );
+        return {
+          position: village.location,
+          tier: this.calculateTier(village.location),
+          distance: Math.round(distance),
+          villageKey: village.key,
+        };
+      } else {
+        // Selection invalid - clear it
+        this.setSelectedVillage(player, null);
+      }
+    }
+
+    // No valid manual selection - use automatic targeting
     return this.getNearestUnconqueredVillage(player);
   }
 
   /**
-   * Update player's compass to point to nearest unconquered village
-   * Shows action bar message with distance and direction
+   * Update player's compass to point to target village
+   * Shows action bar message with distance, direction, and selection indicator
    */
   public updateCompass(player: Player): void {
     const target = this.getCompassTarget(player);
@@ -93,11 +122,16 @@ export class CompassNavigationService implements ICompassNavigationService {
 
     const direction = this.getDirectionArrow(player, target.position);
     const tierName = this.getTierName(target.tier);
+    const selectedKey = this.getSelectedVillage(player);
+    const isManualSelection = selectedKey === target.villageKey;
+
+    // Show selection indicator in action bar
+    const prefix = isManualSelection ? "§6[S] " : "§6"; // [S] = Selected
 
     // Show action bar with tier, distance and direction
     player.onScreenDisplay.setActionBar({
       rawtext: [
-        { text: "§6" },
+        { text: prefix },
         { text: tierName },
         { text: ` §f${target.distance}m ${direction}` },
       ],
@@ -188,5 +222,161 @@ export class CompassNavigationService implements ICompassNavigationService {
     if (a >= 202.5 && a < 247.5) return "↙";
     if (a >= 247.5 && a < 292.5) return "←";
     return "↖";
+  }
+
+  /**
+   * Set player's manually selected village target
+   * Stores selection in DynamicProperties for persistence
+   */
+  public setSelectedVillage(player: Player, villageKey: string | null): void {
+    const key = `${this.PLAYER_SELECTION_PREFIX}${player.id}`;
+
+    if (villageKey === null) {
+      world.setDynamicProperty(key, undefined); // Clear selection
+    } else {
+      world.setDynamicProperty(key, villageKey);
+    }
+  }
+
+  /**
+   * Get player's manually selected village key
+   * Retrieves from DynamicProperties
+   */
+  public getSelectedVillage(player: Player): string | null {
+    const key = `${this.PLAYER_SELECTION_PREFIX}${player.id}`;
+    const data = world.getDynamicProperty(key);
+    return typeof data === "string" ? data : null;
+  }
+
+  /**
+   * Show village selection UI when compass is right-clicked
+   * Displays all discovered villages with distance, status, and selection buttons
+   */
+  public async showVillageSelectionUI(player: Player): Promise<void> {
+    const allVillages = this.villageCache.getDiscoveredVillages();
+
+    const form = new ActionFormData()
+      .title(this.messageProvider.getMessage("mc.raids.compass.villages.title", "Village Compass"))
+      .body(
+        this.messageProvider.getMessage(
+          "mc.raids.compass.villages.body",
+          `${allVillages.length} villages discovered. Select a target or close to auto-target.`
+        )
+      );
+
+    if (allVillages.length === 0) {
+      form.body(
+        this.messageProvider.getMessage(
+          "mc.raids.compass.villages.none",
+          "No villages discovered yet. Explore to find villages!"
+        )
+      );
+      await form.show(player);
+      return;
+    }
+
+    // Sort by distance
+    const villagesWithDistance = allVillages.map((village) => {
+      const distance = DistanceUtils.calculateHorizontalDistance(player.location, village.location);
+      return { village, distance };
+    });
+    villagesWithDistance.sort((a, b) => a.distance - b.distance);
+
+    // Add "Clear Selection" button first if there's a current selection
+    const selectedKey = this.getSelectedVillage(player);
+    const buttonMap: (string | null)[] = []; // Track button index → village key
+
+    if (selectedKey) {
+      form.button(
+        this.messageProvider.getMessage(
+          "mc.raids.compass.clear_selection",
+          "✖ Clear Selection (Auto-Target)"
+        )
+      );
+      buttonMap.push(null); // null = clear selection
+    }
+
+    // Add village buttons
+    for (const { village, distance } of villagesWithDistance) {
+      const canConquer = this.conquestTracker.canConquer(player.id, village.key);
+
+      let statusIcon: string;
+      let statusText: string;
+      let colorCode: string;
+
+      if (!canConquer) {
+        const cooldown = this.conquestTracker.getFormattedCooldown(player.id, village.key);
+        statusIcon = "[C]"; // [C] = Cooldown
+        statusText = `Cooldown: ${cooldown}`;
+        colorCode = "§c"; // Red for cooldown
+      } else if (village.key === selectedKey) {
+        statusIcon = "[S]"; // [S] = Selected
+        statusText = "SELECTED";
+        colorCode = "§6"; // Gold for selected
+      } else {
+        statusIcon = "[R]"; // [R] = Ready
+        statusText = "Ready";
+        colorCode = "§a"; // Green for ready
+      }
+
+      const tierName = this.getTierName(this.calculateTier(village.location));
+      const distanceText = Math.round(distance);
+      const buttonText = `${colorCode}${statusIcon}§r ${tierName} - ${distanceText}m - ${statusText}`;
+
+      form.button(buttonText);
+      buttonMap.push(village.key);
+    }
+
+    const response = await form.show(player);
+
+    if (response.canceled || response.selection === undefined) {
+      return; // User closed form
+    }
+
+    const buttonIndex = response.selection;
+    const selectedVillageKey = buttonMap[buttonIndex];
+
+    if (selectedVillageKey === null) {
+      // Clear selection button clicked
+      this.setSelectedVillage(player, null);
+      player.sendMessage({
+        rawtext: [
+          { text: "§a" },
+          this.messageProvider.getMessage(
+            "mc.raids.compass.selection_cleared",
+            "Compass now auto-targeting nearest village"
+          ),
+        ],
+      });
+    } else {
+      // Village selected
+      const village = allVillages.find((v) => v.key === selectedVillageKey);
+      if (village && this.conquestTracker.canConquer(player.id, village.key)) {
+        this.setSelectedVillage(player, selectedVillageKey);
+        const distance = Math.round(
+          DistanceUtils.calculateHorizontalDistance(player.location, village.location)
+        );
+        player.sendMessage({
+          rawtext: [
+            { text: "§a" },
+            this.messageProvider.getMessage(
+              "mc.raids.compass.village_selected",
+              `Village selected: ${distance}m away`
+            ),
+          ],
+        });
+      } else {
+        // Village on cooldown - show error
+        player.sendMessage({
+          rawtext: [
+            { text: "§c" },
+            this.messageProvider.getMessage(
+              "mc.raids.compass.cannot_select",
+              "Cannot select village on cooldown"
+            ),
+          ],
+        });
+      }
+    }
   }
 }

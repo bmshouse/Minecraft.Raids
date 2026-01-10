@@ -105,9 +105,7 @@ export function playerBookServiceTest(test: gametest.Test) {
     null as any, // resourceService - not needed for construction test
     null as any, // recruitmentService - not needed for construction test
     null as any, // unitPocketService - not needed for construction test
-    null as any, // wealthCalculationService - not needed for construction test
-    null as any, // villageCache - not needed for construction test
-    null as any // conquestTracker - not needed for construction test
+    null as any // wealthCalculationService - not needed for construction test
   );
 
   // Service initialized successfully

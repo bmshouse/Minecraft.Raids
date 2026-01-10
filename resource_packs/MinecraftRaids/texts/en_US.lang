@@ -19,6 +19,7 @@ mc.raids.book.section.leaderboard=Wealth Leaderboard
 mc.raids.book.section.raidparty=Raid Party Management
 mc.raids.book.section.recruit=Recruit Units
 mc.raids.book.section.managearmy=Discharge Units
+mc.raids.book.backtomenu=§7← Back to Menu
 
 ###Minecraft Raids - Wealth Leaderboard Messages
 mc.raids.leaderboard.title=Wealth Leaderboard
@@ -75,10 +76,19 @@ mc.raids.compass.name=Village Compass
 mc.raids.compass.received=You received a Village Compass!
 mc.raids.compass.novillages=No unconquered villages nearby
 mc.raids.compass.explore=Explore %s for new villages
+mc.raids.compass.villages.title=Village Compass
+mc.raids.compass.villages.body=%s villages discovered. Select a target or close to auto-target.
+mc.raids.compass.villages.none=No villages discovered yet. Explore to find villages!
+mc.raids.compass.clear_selection=✖ Clear Selection (Auto-Target)
+mc.raids.compass.selection_cleared=Compass now auto-targeting nearest village
+mc.raids.compass.village_selected=Village selected: %s meters away
+mc.raids.compass.cannot_select=Cannot select village on cooldown
 
 ###Minecraft Raids - Village Discovery Messages
 mc.raids.village.discovered_command=Village discovered via compass! %sm away
 mc.raids.village.discovered_entity=New village discovered! %sm away
+mc.raids.village.peaceful_discovered=Peaceful Village Discovered!
+mc.raids.village.peaceful_explanation=This village is too close to spawn to have defenders. Explore farther to find hostile villages with emerald rewards!
 
 ###Minecraft Raids - Player Book Villages Section
 mc.raids.book.section.villages=Discovered Villages
@@ -119,6 +129,7 @@ mc.raids.unit.remove_failed=§cFailed to remove pocketed unit!
 mc.raids.unit.sell_price=for %s emeralds!
 mc.raids.village.cooldown=§cVillage on cooldown! Wait %s
 mc.raids.village.conquered=§a§lVILLAGE CONQUERED! §r§7+%s emeralds
+mc.raids.defender.killed=+%s emeralds (Defender eliminated)
 mc.raids.currency.emeralds=emeralds
 mc.raids.recruitment.deduct_failed=Failed to deduct resources!
 

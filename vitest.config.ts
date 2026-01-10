@@ -1,6 +1,14 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@minecraft/server': path.resolve(__dirname, 'scripts/__mocks__/@minecraft/server.ts'),
+      '@minecraft/server-ui': path.resolve(__dirname, 'scripts/__mocks__/@minecraft/server-ui.ts'),
+      '@minecraft/server-gametest': path.resolve(__dirname, 'scripts/__mocks__/@minecraft/server-gametest.ts'),
+    },
+  },
   test: {
     globals: true,
     environment: 'node',

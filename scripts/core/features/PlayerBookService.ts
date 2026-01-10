@@ -13,12 +13,9 @@ import type { IResourceService } from "../resources/IResourceService";
 import type { IRecruitmentService } from "../recruitment/IRecruitmentService";
 import type { IUnitPocketService } from "../recruitment/IUnitPocketService";
 import type { IWealthCalculationService } from "./IWealthCalculationService";
-import type { IVillageCache } from "./village/IVillageCache";
-import type { ConquestTracker } from "./village/ConquestTracker";
 import { UnitDefinitions, type UnitDefinition } from "../recruitment/UnitDefinitions";
 import { CostFormatter } from "../utils/CostFormatter";
 import type { RecruitmentResult } from "../recruitment/IRecruitmentService";
-import { DistanceUtils } from "../utils/DistanceUtils";
 
 /**
  * Internal representation of a unit for sell operations
@@ -42,7 +39,6 @@ interface UnifiedUnitReference {
  * - Raid Party: Shows tamed wolves and recruited units
  * - Recruit Units: Purchase new units for your army
  * - Manage Army: Sell units from your army
- * - Discovered Villages: Shows all villages found during exploration
  *
  * Follows Single Responsibility Principle - only handles book UI presentation
  */
@@ -52,9 +48,7 @@ export class PlayerBookService implements IPlayerBookService {
     private readonly resourceService: IResourceService,
     private readonly recruitmentService: IRecruitmentService,
     private readonly unitPocketService: IUnitPocketService,
-    private readonly wealthCalculationService: IWealthCalculationService,
-    private readonly villageCache: IVillageCache,
-    private readonly conquestTracker: ConquestTracker
+    private readonly wealthCalculationService: IWealthCalculationService
   ) {}
 
   /**
@@ -84,8 +78,7 @@ export class PlayerBookService implements IPlayerBookService {
       .button(this.messageProvider.getMessage("mc.raids.book.section.leaderboard"))
       .button(this.messageProvider.getMessage("mc.raids.book.section.raidparty"))
       .button(this.messageProvider.getMessage("mc.raids.book.section.recruit"))
-      .button(this.messageProvider.getMessage("mc.raids.book.section.managearmy"))
-      .button(this.messageProvider.getMessage("mc.raids.book.section.villages"));
+      .button(this.messageProvider.getMessage("mc.raids.book.section.managearmy"));
 
     const result = await form.show(player);
 
@@ -102,9 +95,6 @@ export class PlayerBookService implements IPlayerBookService {
           break;
         case 3:
           await this.showManageArmySection(player);
-          break;
-        case 4:
-          await this.showDiscoveredVillagesSection(player);
           break;
       }
     }
@@ -255,10 +245,13 @@ export class PlayerBookService implements IPlayerBookService {
     const pocketedUnits = this.unitPocketService.getPocketedUnits(player);
 
     if (activeUnits.length === 0 && pocketedUnits.length === 0) {
-      player.sendMessage(
-        this.messageProvider.getMessage("mc.raids.pocket.nounits").text || "You have no raid units!"
-      );
-      // Return to table of contents
+      // Show panel with message instead of just sending message and returning
+      const form = new ActionFormData()
+        .title(this.messageProvider.getMessage("mc.raids.pocket.title"))
+        .body(this.messageProvider.getMessage("mc.raids.pocket.nounits"))
+        .button(this.messageProvider.getMessage("mc.raids.book.backtomenu", "§7← Back to Menu"));
+
+      await form.show(player);
       await this.showTableOfContents(player);
       return;
     }
@@ -611,53 +604,5 @@ export class PlayerBookService implements IPlayerBookService {
         rawtext: [{ text: "§e" }, { translate: "mc.raids.managearmy.replacement.failed" }],
       });
     }
-  }
-
-  /**
-   * Shows the Discovered Villages section
-   * Displays all villages found during exploration with status and distance
-   */
-  private async showDiscoveredVillagesSection(player: Player): Promise<void> {
-    const allVillages = this.villageCache.getDiscoveredVillages();
-
-    const form = new ActionFormData()
-      .title(this.messageProvider.getMessage("mc.raids.book.villages.title"))
-      .body(
-        this.messageProvider.getMessage(
-          "mc.raids.book.villages.body",
-          allVillages.length.toString()
-        )
-      );
-
-    if (allVillages.length === 0) {
-      form.body(this.messageProvider.getMessage("mc.raids.book.villages.none"));
-    } else {
-      // Sort villages by distance from player
-      const villagesWithDistance = allVillages.map((village) => {
-        const distance = DistanceUtils.calculateHorizontalDistance(
-          player.location,
-          village.location
-        );
-        return { village, distance };
-      });
-
-      villagesWithDistance.sort((a, b) => a.distance - b.distance);
-
-      // Display each village with status
-      for (const { village, distance } of villagesWithDistance) {
-        const canConquer = this.conquestTracker.canConquer(player.id, village.key);
-        const status = canConquer
-          ? this.messageProvider.getMessage("mc.raids.book.villages.ready")
-          : this.messageProvider.getMessage("mc.raids.book.villages.cooldown");
-
-        const distanceText = Math.round(distance);
-        const buttonText = `${status} - ${distanceText}m away`;
-        form.button(buttonText);
-      }
-    }
-
-    await form.show(player);
-    // Note: Clicking a village entry does nothing - list stays open
-    // User must close the form manually
   }
 }

@@ -29,4 +29,25 @@ export interface ICompassNavigationService {
    * @param player - The player holding the compass
    */
   updateCompass(player: Player): void;
+
+  /**
+   * Set player's manually selected village target
+   * @param player - The player
+   * @param villageKey - Village key to target (null to clear selection)
+   */
+  setSelectedVillage(player: Player, villageKey: string | null): void;
+
+  /**
+   * Get player's manually selected village key
+   * @param player - The player
+   * @returns Village key or null if no manual selection
+   */
+  getSelectedVillage(player: Player): string | null;
+
+  /**
+   * Show village selection UI (for compass right-click)
+   * Displays all discovered villages with distance, status, and selection buttons
+   * @param player - The player
+   */
+  showVillageSelectionUI(player: Player): Promise<void>;
 }
