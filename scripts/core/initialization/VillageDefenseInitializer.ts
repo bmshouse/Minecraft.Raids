@@ -1,72 +1,178 @@
 import { world, system } from "@minecraft/server";
-import { IInitializer } from "./IInitializer";
-import type { IVillageDefenseService } from "../features/village/IVillageDefenseService";
+import type { Player } from "@minecraft/server";
+import type { IInitializer } from "./IInitializer";
+import { VillageRaidService } from "../features/village/VillageRaidService";
+import { ConquestTracker } from "../features/village/ConquestTracker";
+import type { IResourceService } from "../resources/IResourceService";
+import type { IPlayerPowerCalculator } from "../features/scaling/IPlayerPowerCalculator";
+import type { IMessageProvider } from "../messaging/IMessageProvider";
+import type { IDefenderRewardService } from "../features/rewards/IDefenderRewardService";
 
 /**
- * Initializes the village defense enhancement system
- * Uses periodic scanning to detect villages (events don't work in this MC version)
- * and applies distance-based defenses
+ * Initializer for the village raid attack system
+ * Scans periodically for villages near players and activates them for attack
+ * Checks for victories and distributes emerald rewards
+ *
+ * Note: VillageRaidService now uses progression-based difficulty via injected calculator
+ *
+ * Single Responsibility: Periodic village scanning, activation, and victory detection
  */
 export class VillageDefenseInitializer implements IInitializer {
-  constructor(private readonly defenseService: IVillageDefenseService) {}
+  // Scan frequency: every 2 seconds (40 ticks at 20 ticks/second)
+  private readonly SCAN_INTERVAL = 40;
+
+  // Victory check frequency: every 2 seconds
+  private readonly VICTORY_CHECK_INTERVAL = 40;
+
+  constructor(
+    private readonly villageRaidService: VillageRaidService,
+    private readonly conquestTracker: ConquestTracker,
+    private readonly resourceService: IResourceService,
+    private readonly messageProvider: IMessageProvider,
+    private readonly playerPowerCalculator?: IPlayerPowerCalculator,
+    private readonly defenderRewardService?: IDefenderRewardService
+  ) {}
 
   /**
-   * Starts periodic village scanning
-   * Scans for villagers near players every 5 seconds
+   * Initializes the village raid system
+   * Sets up periodic scanning for village activation and victory detection
    */
   public initialize(): void {
-    console.log("[VillageDefense] VillageDefenseInitializer.initialize() called");
+    console.log("[VillageRaid] Initializing village raid system...");
 
-    // Run periodic scan every 100 ticks (5 seconds)
+    // Periodic scan for villages near players (activation)
     system.runInterval(() => {
-      this.scanForVillages();
-    }, 100);
+      const dimension = world.getDimension("overworld");
+      this.villageRaidService.checkNearbyVillages(dimension);
+    }, this.SCAN_INTERVAL);
 
-    console.log("[VillageDefense] Started periodic village scanning (every 5 seconds)");
+    // Periodic victory detection
+    system.runInterval(() => {
+      const dimension = world.getDimension("overworld");
+      this.checkVictories(dimension);
+    }, this.VICTORY_CHECK_INTERVAL);
+
+    console.log(`[VillageRaid] Village raid system initialized`);
   }
 
   /**
-   * Scans for villages near all players
-   * Only scans loaded chunks (within player proximity)
+   * Check all active villages for victory conditions
+   * Distribute rewards and apply cooldowns when villages are conquered
    */
-  private scanForVillages(): void {
-    try {
-      const dimension = world.getDimension("overworld");
-      const players = world.getAllPlayers();
+  private checkVictories(dimension: any): void {
+    const activeVillages = this.villageRaidService.getActiveVillages();
 
-      // Scan around each player
-      for (const player of players) {
-        // Find villagers within 150 blocks (loaded chunk radius)
-        const nearbyVillagers = dimension.getEntities({
-          type: "minecraft:villager",
-          location: player.location,
-          maxDistance: 150
-        });
+    for (const villageKey of activeVillages) {
+      const justConquered = this.villageRaidService.checkVictory(villageKey, dimension);
 
-        // Process each unique village
-        for (const villager of nearbyVillagers) {
-          const villageLocation = villager.location;
+      if (justConquered) {
+        // Find nearest player to reward
+        const state = this.villageRaidService.getVillageState(villageKey);
+        if (!state) continue;
 
-          // Log detection
-          console.log(
-            `[VillageDefense] Village detected at (${Math.round(villageLocation.x)}, ${Math.round(villageLocation.y)}, ${Math.round(villageLocation.z)})`
-          );
+        const players = world.getAllPlayers();
+        let nearestPlayer = null;
+        let nearestDistance = Infinity;
 
-          // Enhance village (fire and forget)
-          // State checking happens in enhanceVillage() - skips if fully defended, retries failed spawns if partially defended
-          this.defenseService.enhanceVillage(villageLocation).catch((error) => {
-            console.log(
-              `[VillageDefense] ERROR enhancing village at (${Math.round(villageLocation.x)}, ${Math.round(villageLocation.z)}): ${error}`
+        for (const player of players) {
+          const dx = player.location.x - state.location.x;
+          const dz = player.location.z - state.location.z;
+          const distance = Math.sqrt(dx * dx + dz * dz);
+
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestPlayer = player;
+          }
+        }
+
+        if (nearestPlayer && nearestDistance <= 100) {
+          // Check cooldown before rewarding
+          if (!this.conquestTracker.canConquer(nearestPlayer.id, villageKey)) {
+            const cooldownMsg = this.messageProvider.getMessage(
+              "mc.raids.village.cooldown",
+              this.conquestTracker.getFormattedCooldown(nearestPlayer.id, villageKey)
             );
+            nearestPlayer.sendMessage(cooldownMsg);
+            continue;
+          }
+
+          // Calculate reward based on tier and player power
+          const reward = this.calculateReward(nearestPlayer, state.tier);
+
+          // Grant reward
+          this.resourceService.addEmeralds(nearestPlayer, reward);
+
+          // Record conquest (starts cooldown)
+          this.conquestTracker.recordConquest(nearestPlayer.id, villageKey);
+
+          // Notify player - use translate + with for proper message template substitution
+          nearestPlayer.sendMessage({
+            translate: "mc.raids.village.conquered",
+            with: [reward.toString()],
           });
 
-          // Only process one villager per scan to avoid spamming
-          // The village's defense state is tracked internally, so other villagers will be skipped next scan
-          break;
+          console.log(
+            `[VillageRaid] Player ${nearestPlayer.name} conquered village ${villageKey} - rewarded ${reward} emeralds`
+          );
+
+          // Schedule village reset after cooldown (15 minutes)
+          system.runTimeout(() => {
+            this.villageRaidService.resetVillage(villageKey);
+
+            // Clear defender reward tracking
+            this.defenderRewardService?.clearVillageRewards(villageKey);
+
+            console.log(
+              `[VillageRaid] Village ${villageKey} cooldown expired - defenders will respawn`
+            );
+          }, 18000); // 15 minutes = 900 seconds = 18000 ticks
         }
       }
-    } catch (error) {
-      console.log(`[VillageDefense] Error in scanForVillages: ${error}`);
     }
+  }
+
+  /**
+   * Calculate emerald reward based on village tier and player power
+   * Base rewards: Tier 1 = 18, Tier 2 = 36, Tier 3 = 60
+   * Scaled by player power: 0.8x to 1.2x based on equipment and party
+   */
+  private calculateReward(player: Player, tier: number): number {
+    // Get base reward from tier
+    // Reduced by 40% for better game balance
+    let baseReward: number;
+    switch (tier) {
+      case 1:
+        baseReward = 18; // Light defense (was 30)
+        break;
+      case 2:
+        baseReward = 36; // Medium defense (was 60)
+        break;
+      case 3:
+        baseReward = 60; // Heavy defense (was 100)
+        break;
+      default:
+        baseReward = 0;
+    }
+
+    // Apply power scaling if calculator is available
+    if (this.playerPowerCalculator && baseReward > 0) {
+      const powerLevel = this.playerPowerCalculator.calculatePowerLevel(player);
+
+      // Scale between 0.8 and 1.2 based on power level
+      // Beginner (0.0): 0.8x, Intermediate (0.5): 1.0x, Expert (1.0): 1.2x
+      const scalingFactor = 0.8 + powerLevel.totalScore * 0.4;
+
+      const scaledReward = Math.round(baseReward * scalingFactor);
+
+      console.log(
+        `[VillageRaid] Reward scaling for ${player.name}: Tier ${tier} base=${baseReward}, ` +
+          `power=${powerLevel.tier} (${powerLevel.totalScore.toFixed(2)}), ` +
+          `scaling=${scalingFactor.toFixed(2)}, final=${scaledReward}`
+      );
+
+      return scaledReward;
+    }
+
+    return baseReward;
   }
 }

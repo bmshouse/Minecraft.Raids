@@ -1,17 +1,15 @@
-import {
-  Dimension,
-  Vector3,
-} from "@minecraft/server";
+import { Dimension, Vector3, Entity } from "@minecraft/server";
 import type { EntitySpawnConfig, SpawnPattern } from "./DefenseConfiguration";
 import { SpawnPattern as SpawnPatternEnum } from "./DefenseConfiguration";
 
 /**
  * Result of attempting to spawn entities
- * Tracks successes and failures for retry tracking
+ * Tracks successes, failures, and spawned entities for raid tracking
  */
 export interface SpawnResult {
   attempted: number;
   succeeded: number;
+  entities: Entity[]; // NEW: spawned entities for tracking
   failed: Array<{
     entityType: string;
     position: Vector3;
@@ -55,19 +53,21 @@ export class DefenseSpawner {
     const result: SpawnResult = {
       attempted: count,
       succeeded: 0,
+      entities: [],
       failed: [],
     };
 
     for (const position of positions) {
-      const success = this.trySpawnEntity(
+      const entity = this.trySpawnEntityWithReturn(
         dimension,
         position,
         config.entityType,
         config.tierEvent
       );
 
-      if (success) {
+      if (entity) {
         result.succeeded++;
+        result.entities.push(entity);
       } else {
         result.failed.push({
           entityType: config.entityType,
@@ -81,19 +81,56 @@ export class DefenseSpawner {
   }
 
   /**
-   * Attempts to spawn a single entity at terrain-aware position
-   *
-   * CENTRALIZES ground block finding logic that was duplicated 9+ times:
-   * - Finds ground block at XZ coordinate
-   * - Checks if chunk is loaded (returns false if not)
-   * - Gets block one above ground for spawning
-   * - Spawns entity at exact terrain-aware location
-   * - Optionally triggers tier event
-   *
-   * This single method replaces all previous duplications and is reused in:
-   * - Initial entity spawning (spawnEntities)
-   * - Retry logic (retryFailedSpawns in VillageDefenseService)
-   *
+   * Attempts to spawn a single entity and return it
+   * @param dimension - The dimension to spawn in
+   * @param position - Spawn position (Y used as starting point)
+   * @param entityType - Entity type identifier
+   * @param tierEvent - Optional event to trigger on spawned entity
+   * @returns Entity if spawn successful, null if chunk not loaded
+   */
+  public static trySpawnEntityWithReturn(
+    dimension: Dimension,
+    position: Vector3,
+    entityType: string,
+    tierEvent?: string
+  ): Entity | null {
+    // Find ground block at XZ coordinate (using provided Y as starting point)
+    const groundBlock = dimension.getBlock({
+      x: position.x,
+      y: position.y,
+      z: position.z,
+    });
+
+    if (groundBlock === undefined) {
+      // Chunk not loaded - will be retried later
+      return null;
+    }
+
+    // Get block one above ground for spawning (terrain-aware)
+    const spawnBlock = dimension.getBlock({
+      x: position.x,
+      y: groundBlock.location.y + 1,
+      z: position.z,
+    });
+
+    if (spawnBlock === undefined) {
+      // Spawn location not loaded - will be retried later
+      return null;
+    }
+
+    // Spawn entity at exact terrain-aware location
+    const entity = dimension.spawnEntity(entityType, spawnBlock.location);
+
+    // Trigger tier event if specified (for wolves)
+    if (tierEvent) {
+      entity.triggerEvent(tierEvent);
+    }
+
+    return entity;
+  }
+
+  /**
+   * Attempts to spawn a single entity at terrain-aware position (legacy boolean return)
    * @param dimension - The dimension to spawn in
    * @param position - Spawn position (Y used as starting point)
    * @param entityType - Entity type identifier
@@ -130,20 +167,7 @@ export class DefenseSpawner {
       return false;
     }
 
-    // Spawn entity at exact terrain-aware location (block.location gives precise coordinates)
-    const entity = dimension.spawnEntity(entityType, spawnBlock.location);
-
-    // Trigger tier event if specified (for wolves)
-    if (tierEvent) {
-      entity.triggerEvent(tierEvent);
-    }
-
-    // Crossbow equipment for village_guard_pillager is handled via behavior pack loot table:
-    // behavior_packs/MinecraftRaids/loot_tables/entities/pillager_gear.json
-    // The entity's minecraft:equipment component references this loot table,
-    // and minecraft:behavior.equip_item automatically equips the crossbow on spawn.
-
-    return true;
+    return this.trySpawnEntityWithReturn(dimension, position, entityType, tierEvent) !== null;
   }
 
   /**
@@ -209,10 +233,10 @@ export class DefenseSpawner {
    */
   private static calculateCardinalPositions(center: Vector3, radius: number): Vector3[] {
     return [
-      { x: center.x + radius, y: center.y, z: center.z },      // East
-      { x: center.x - radius, y: center.y, z: center.z },      // West
-      { x: center.x, y: center.y, z: center.z + radius },      // South
-      { x: center.x, y: center.y, z: center.z - radius },      // North
+      { x: center.x + radius, y: center.y, z: center.z }, // East
+      { x: center.x - radius, y: center.y, z: center.z }, // West
+      { x: center.x, y: center.y, z: center.z + radius }, // South
+      { x: center.x, y: center.y, z: center.z - radius }, // North
     ];
   }
 

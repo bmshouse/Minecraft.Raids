@@ -4,6 +4,9 @@
   "texture_data": {
     "minecraft_raids:player_directory_book": {
       "textures": "textures/items/player_book"
+    },
+    "minecraft_raids:village_compass": {
+      "textures": "textures/items/compass_item"
     }
   }
 }

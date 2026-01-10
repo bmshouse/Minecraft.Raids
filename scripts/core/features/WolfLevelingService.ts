@@ -1,9 +1,4 @@
-import {
-  Entity,
-  world,
-  EntityComponentTypes,
-  EntityTameableComponent,
-} from "@minecraft/server";
+import { Entity, world, EntityComponentTypes, EntityTameableComponent } from "@minecraft/server";
 import type { IWolfLevelingService } from "./IWolfLevelingService";
 import type { IMessageProvider } from "../messaging/IMessageProvider";
 
@@ -125,11 +120,7 @@ export class WolfLevelingService implements IWolfLevelingService {
   /**
    * Triggers the level-up event on the wolf entity
    */
-  private triggerLevelUp(
-    wolf: Entity,
-    newLevel: number,
-    totalKills: number
-  ): void {
+  private triggerLevelUp(wolf: Entity, newLevel: number, totalKills: number): void {
     let eventName: string;
 
     switch (newLevel) {
@@ -148,17 +139,13 @@ export class WolfLevelingService implements IWolfLevelingService {
       wolf.triggerEvent(eventName);
 
       // Notify owner if present
-      const tameable = wolf.getComponent(
-        EntityComponentTypes.Tameable
-      ) as EntityTameableComponent | undefined;
+      const tameable = wolf.getComponent(EntityComponentTypes.Tameable) as
+        | EntityTameableComponent
+        | undefined;
       if (tameable?.tamedToPlayer) {
         const owner = tameable.tamedToPlayer;
-        const levelUpMessage = this.messageProvider.getMessage(
-          "mc.raids.wolf.levelup"
-        );
-        owner.sendMessage(
-          `§6${levelUpMessage} §e${newLevel}§6! (${totalKills} kills)`
-        );
+        const levelUpMessage = this.messageProvider.getMessage("mc.raids.wolf.levelup");
+        owner.sendMessage(`§6${levelUpMessage} §e${newLevel}§6! (${totalKills} kills)`);
       }
 
       console.warn(
@@ -187,8 +174,6 @@ export class WolfLevelingService implements IWolfLevelingService {
     }
 
     // Check if entity matches one of the hostile families
-    return this.VALID_HOSTILE_FAMILIES.some((family) =>
-      entity.matches({ families: [family] })
-    );
+    return this.VALID_HOSTILE_FAMILIES.some((family) => entity.matches({ families: [family] }));
   }
 }

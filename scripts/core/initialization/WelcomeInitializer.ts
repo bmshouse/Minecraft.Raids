@@ -6,6 +6,7 @@ import {
   ItemLockMode,
   ItemStack,
   EntityInventoryComponent,
+  system,
 } from "@minecraft/server";
 import { IInitializer } from "./IInitializer";
 import type { IMessageProvider } from "../messaging/IMessageProvider";
@@ -37,11 +38,18 @@ export class WelcomeInitializer implements IInitializer {
   /**
    * Handles player spawn events
    * Sends welcome message when player first joins the world (initialSpawn = true)
+   * Defers execution by one tick to ensure player entity is fully initialized
    */
   private onPlayerSpawn(event: PlayerSpawnAfterEvent): void {
     // Only send welcome message when player first joins the world
     if (event.initialSpawn) {
-      this.displayWelcomeMessage(event.player);
+      const player = event.player;
+      // Defer execution by one tick to ensure player is fully initialized
+      system.run(() => {
+        if (player.isValid) {
+          this.displayWelcomeMessage(player);
+        }
+      });
     }
   }
 
@@ -62,9 +70,9 @@ export class WelcomeInitializer implements IInitializer {
     // Display on-screen title with subtitle
     // setTitle accepts RawMessage directly
     player.onScreenDisplay.setTitle(welcomeMessage, {
-      fadeInDuration: 1 * TicksPerSecond,    // 1 second fade in
-      fadeOutDuration: 2 * TicksPerSecond,   // 2 seconds fade out
-      stayDuration: 5 * TicksPerSecond,      // Display for 5 seconds
+      fadeInDuration: 1 * TicksPerSecond, // 1 second fade in
+      fadeOutDuration: 2 * TicksPerSecond, // 2 seconds fade out
+      stayDuration: 5 * TicksPerSecond, // Display for 5 seconds
       subtitle: {
         rawtext: [initMessage, { text: "\n" }, versionMessage],
       },
@@ -107,7 +115,7 @@ export class WelcomeInitializer implements IInitializer {
 
         const player_book = new ItemStack("minecraft_raids:player_list_book", 1);
         player_book.keepOnDeath = true;
-        player_book.lockMode = ItemLockMode.slot;
+        player_book.lockMode = ItemLockMode.inventory;
 
         inventory.container.addItem(player_book);
       }

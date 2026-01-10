@@ -1,7 +1,7 @@
 import { world, Vector3, Dimension } from "@minecraft/server";
 import type { IVillageDefenseService } from "./IVillageDefenseService";
 import { DefenseConfiguration, DefenseTier } from "./DefenseConfiguration";
-import { DefenseSpawner } from "./DefenseSpawner";
+import { EntitySpawner } from "../../utils/EntitySpawner";
 
 /**
  * Represents a spawn attempt that failed due to unloaded chunk
@@ -28,7 +28,7 @@ interface VillageDefenseState {
  * - Manages village state tracking (clustering and full defense checks)
  * - Handles retry logic for failed spawns due to unloaded chunks
  *
- * Delegates entity spawning to DefenseSpawner utility (eliminates DRY violations)
+ * Delegates entity spawning to EntitySpawner utility (advanced terrain-aware spawning)
  * Uses DefenseConfiguration for data-driven tier definitions (eliminates hardcoded values)
  */
 export class VillageDefenseService implements IVillageDefenseService {
@@ -90,9 +90,7 @@ export class VillageDefenseService implements IVillageDefenseService {
       if (failedSpawns.length === 0) {
         console.log(`[VillageDefense] Village FULLY DEFENDED`);
       } else {
-        console.log(
-          `[VillageDefense] ${failedSpawns.length} spawns failed (will retry later)`
-        );
+        console.log(`[VillageDefense] ${failedSpawns.length} spawns failed (will retry later)`);
       }
     } catch (error) {
       console.log(`[VillageDefense] Failed to enhance village: ${error}`);
@@ -108,8 +106,15 @@ export class VillageDefenseService implements IVillageDefenseService {
     const distance = this.calculateDistance(villageLocation, spawnLoc);
 
     const tier = DefenseConfiguration.getTierForDistance(distance);
-    const tierNames = ["None (0-500 blocks)", "Light (500-1000)", "Medium (1000-2000)", "Heavy (2000+)"];
-    console.log(`[VillageDefense] Distance: ${Math.round(distance)} blocks, Tier: ${tier} (${tierNames[tier]})`);
+    const tierNames = [
+      "None (0-500 blocks)",
+      "Light (500-1000)",
+      "Medium (1000-2000)",
+      "Heavy (2000+)",
+    ];
+    console.log(
+      `[VillageDefense] Distance: ${Math.round(distance)} blocks, Tier: ${tier} (${tierNames[tier]})`
+    );
 
     return tier;
   }
@@ -130,7 +135,7 @@ export class VillageDefenseService implements IVillageDefenseService {
 
     // Spawn each entity type defined in configuration
     for (const entityConfig of config.entities) {
-      const result = DefenseSpawner.spawnEntities(dimension, center, entityConfig);
+      const result = EntitySpawner.spawnEntities(dimension, center, entityConfig);
 
       console.log(
         `[VillageDefense] ${entityConfig.entityType}: ${result.succeeded}/${result.attempted} spawned`
@@ -145,7 +150,7 @@ export class VillageDefenseService implements IVillageDefenseService {
 
   /**
    * Retries failed spawns when chunks become loaded
-   * Uses DefenseSpawner.trySpawnEntity() (eliminates DRY violation)
+   * Uses EntitySpawner.trySpawnEntity() with advanced terrain detection
    * @param dimension - Overworld dimension
    * @param state - Village defense state with failed spawns
    */
@@ -153,17 +158,15 @@ export class VillageDefenseService implements IVillageDefenseService {
     const remainingFailed: FailedSpawn[] = [];
 
     for (const failed of state.failedSpawns) {
-      const success = DefenseSpawner.trySpawnEntity(
+      const entity = EntitySpawner.trySpawnEntity(
         dimension,
         failed.position,
         failed.entityType,
         failed.tierEvent
       );
 
-      if (success) {
-        console.log(
-          `[VillageDefense] Successfully spawned ${failed.entityType} on retry`
-        );
+      if (entity) {
+        console.log(`[VillageDefense] Successfully spawned ${failed.entityType} on retry`);
       } else {
         remainingFailed.push(failed);
       }
@@ -175,7 +178,9 @@ export class VillageDefenseService implements IVillageDefenseService {
     if (remainingFailed.length === 0) {
       console.log(`[VillageDefense] All retry spawns successful - village now FULLY DEFENDED`);
     } else {
-      console.log(`[VillageDefense] ${remainingFailed.length} spawns still failed (will retry later)`);
+      console.log(
+        `[VillageDefense] ${remainingFailed.length} spawns still failed (will retry later)`
+      );
     }
   }
 

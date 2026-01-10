@@ -5,9 +5,9 @@
  * Creates minimal NBT-formatted structures using prismarine-nbt
  */
 
-const fs = require('fs');
-const path = require('path');
-const nbt = require('prismarine-nbt');
+const fs = require("fs");
+const path = require("path");
+const nbt = require("prismarine-nbt");
 
 // Minecraft version for version field (1.21.0)
 const MINECRAFT_VERSION = 18090528;
@@ -15,7 +15,7 @@ const MINECRAFT_VERSION = 18090528;
 // Output directory
 const STRUCTURES_DIR = path.join(
   __dirname,
-  '../../behavior_packs/MinecraftRaids/structures/MinecraftRaids'
+  "../../behavior_packs/MinecraftRaids/structures/MinecraftRaids"
 );
 
 /**
@@ -23,29 +23,29 @@ const STRUCTURES_DIR = path.join(
  */
 function createBlockPalette() {
   return {
-    type: 'list',
+    type: "list",
     value: {
-      type: 'compound',
+      type: "compound",
       value: [
         // Air block (index 0)
         {
-          name: { type: 'string', value: 'minecraft:air' },
-          states: { type: 'compound', value: {} },
-          version: { type: 'int', value: MINECRAFT_VERSION }
+          name: { type: "string", value: "minecraft:air" },
+          states: { type: "compound", value: {} },
+          version: { type: "int", value: MINECRAFT_VERSION },
         },
         // Stone block (index 1)
         {
-          name: { type: 'string', value: 'minecraft:stone' },
+          name: { type: "string", value: "minecraft:stone" },
           states: {
-            type: 'compound',
+            type: "compound",
             value: {
-              stone_type: { type: 'string', value: 'stone' }
-            }
+              stone_type: { type: "string", value: "stone" },
+            },
           },
-          version: { type: 'int', value: MINECRAFT_VERSION }
-        }
-      ]
-    }
+          version: { type: "int", value: MINECRAFT_VERSION },
+        },
+      ],
+    },
   };
 }
 
@@ -73,20 +73,20 @@ function createBlockIndices(blockMap, width, height, depth) {
 
   // Fill in blocks from blockMap
   for (const [key, paletteIndex] of Object.entries(blockMap)) {
-    const [x, y, z] = key.split(',').map(Number);
+    const [x, y, z] = key.split(",").map(Number);
     const idx = getBlockIndex(x, y, z, width, height);
     layer1[idx] = paletteIndex;
   }
 
   return {
-    type: 'list',
+    type: "list",
     value: {
-      type: 'list',
+      type: "list",
       value: [
-        { type: 'int', value: layer1 },
-        { type: 'int', value: layer2 }
-      ]
-    }
+        { type: "int", value: layer1 },
+        { type: "int", value: layer2 },
+      ],
+    },
   };
 }
 
@@ -95,38 +95,38 @@ function createBlockIndices(blockMap, width, height, depth) {
  */
 function createStructure(width, height, depth, blockMap) {
   return {
-    name: '', // Root compound has empty name
-    type: 'compound',
+    name: "", // Root compound has empty name
+    type: "compound",
     value: {
-      format_version: { type: 'int', value: 1 },
+      format_version: { type: "int", value: 1 },
       size: {
-        type: 'list',
-        value: { type: 'int', value: [width, height, depth] }
+        type: "list",
+        value: { type: "int", value: [width, height, depth] },
       },
       structure: {
-        type: 'compound',
+        type: "compound",
         value: {
           block_indices: createBlockIndices(blockMap, width, height, depth),
           palette: {
-            type: 'compound',
+            type: "compound",
             value: {
               default: {
-                type: 'compound',
+                type: "compound",
                 value: {
                   block_palette: createBlockPalette(),
-                  block_position_data: { type: 'compound', value: {} }
-                }
-              }
-            }
+                  block_position_data: { type: "compound", value: {} },
+                },
+              },
+            },
           },
-          entities: { type: 'list', value: { type: 'end', value: [] } }
-        }
+          entities: { type: "list", value: { type: "end", value: [] } },
+        },
       },
       structure_world_origin: {
-        type: 'list',
-        value: { type: 'int', value: [0, 0, 0] }
-      }
-    }
+        type: "list",
+        value: { type: "int", value: [0, 0, 0] },
+      },
+    },
   };
 }
 
@@ -134,7 +134,7 @@ function createStructure(width, height, depth, blockMap) {
  * Write structure to file
  */
 function writeStructure(filename, structure) {
-  const data = nbt.writeUncompressed(structure, 'little');
+  const data = nbt.writeUncompressed(structure, "little");
   const filepath = path.join(STRUCTURES_DIR, filename);
   fs.writeFileSync(filepath, data);
   return filepath;
@@ -145,11 +145,11 @@ function writeStructure(filename, structure) {
  * Used by: Welcome, MessageProvider, PlayerList (2x), RaidParty (5x)
  */
 function createSimpleStructure() {
-  console.log('Creating simple.mcstructure (4×3×4, all air)...');
+  console.log("Creating simple.mcstructure (4×3×4, all air)...");
   // All air (no blocks to place)
   const blockMap = {};
   const structure = createStructure(4, 3, 4, blockMap);
-  const filepath = writeStructure('simple.mcstructure', structure);
+  const filepath = writeStructure("simple.mcstructure", structure);
   const size = fs.statSync(filepath).size;
   console.log(`✓ simple.mcstructure (${size} bytes)`);
 }
@@ -181,7 +181,7 @@ function createWolfStructure(name) {
  */
 async function main() {
   try {
-    console.log('Generating .mcstructure files...\n');
+    console.log("Generating .mcstructure files...\n");
 
     // Ensure output directory exists
     if (!fs.existsSync(STRUCTURES_DIR)) {
@@ -193,32 +193,31 @@ async function main() {
 
     // Create wolf structures
     const wolfStructures = [
-      'wolfStartsAtLevel1',
-      'wolfCanReachLevel2',
-      'wolfCanReachLevel3',
-      'babyWolfStartsAtLevel1',
-      'wolfLevelProgression',
-      'wolfResetToLevel1'
+      "wolfStartsAtLevel1",
+      "wolfCanReachLevel2",
+      "wolfCanReachLevel3",
+      "babyWolfStartsAtLevel1",
+      "wolfLevelProgression",
+      "wolfResetToLevel1",
     ];
 
     for (const name of wolfStructures) {
       createWolfStructure(name);
     }
 
-    console.log('\n✓ Generated 7 structure files successfully!');
+    console.log("\n✓ Generated 7 structure files successfully!");
     console.log(`\nStructures saved to: ${STRUCTURES_DIR}`);
 
     // Verify file sizes
-    console.log('\nFile verification:');
-    const files = fs.readdirSync(STRUCTURES_DIR).filter(f => f.endsWith('.mcstructure'));
+    console.log("\nFile verification:");
+    const files = fs.readdirSync(STRUCTURES_DIR).filter((f) => f.endsWith(".mcstructure"));
     for (const file of files) {
       const filepath = path.join(STRUCTURES_DIR, file);
       const size = fs.statSync(filepath).size;
       console.log(`  ${file}: ${size} bytes`);
     }
-
   } catch (error) {
-    console.error('Error generating structures:', error.message);
+    console.error("Error generating structures:", error.message);
     process.exit(1);
   }
 }

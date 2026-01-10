@@ -95,6 +95,23 @@
         "total_supply": 15,
         "suffocate_time": 0
       },
+      "minecraft:is_tamed": {},
+      "minecraft:tameable": {
+        "probability": 1.0,
+        "tame_items": "bone"
+      },
+      "minecraft:behavior.follow_owner": {
+        "priority": 3,
+        "speed_multiplier": 1.0,
+        "start_distance": 10,
+        "stop_distance": 2
+      },
+      "minecraft:behavior.owner_hurt_by_target": {
+        "priority": 1
+      },
+      "minecraft:behavior.owner_hurt_target": {
+        "priority": 2
+      },
       "minecraft:equipment": {
         "table": "loot_tables/entities/pillager_gear.json"
       },

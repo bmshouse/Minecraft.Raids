@@ -1,9 +1,22 @@
-import minecraft from 'eslint-plugin-minecraft-linting/configs/recommended';
+import minecraftLinting from 'eslint-plugin-minecraft-linting';
+import tsParser from '@typescript-eslint/parser';
 
 export default [
-  minecraft,
   {
     files: ['scripts/**/*.ts'],
     ignores: ['scripts/**/*.test.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      'minecraft-linting': minecraftLinting,
+    },
+    rules: {
+      'minecraft-linting/avoid-unnecessary-command': 'warn',
+    },
   },
 ];

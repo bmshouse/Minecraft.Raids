@@ -2,20 +2,20 @@
  * Defense tier levels based on distance from world spawn
  */
 export enum DefenseTier {
-  None = 0,      // 0-500 blocks from spawn
-  Light = 1,     // 500-1000 blocks from spawn
-  Medium = 2,    // 1000-2000 blocks from spawn
-  Heavy = 3      // 2000+ blocks from spawn
+  None = 0, // 0-500 blocks from spawn
+  Light = 1, // 500-1000 blocks from spawn
+  Medium = 2, // 1000-2000 blocks from spawn
+  Heavy = 3, // 2000+ blocks from spawn
 }
 
 /**
  * Spawn pattern determines how positions are calculated relative to village center
  */
 export enum SpawnPattern {
-  Cardinal,      // N, S, E, W positions
-  Diagonal,      // NE, SE, SW, NW positions
-  Circular,      // Evenly distributed circle
-  Custom         // Explicit position offsets
+  Cardinal, // N, S, E, W positions
+  Diagonal, // NE, SE, SW, NW positions
+  Circular, // Evenly distributed circle
+  Custom, // Explicit position offsets
 }
 
 /**
@@ -23,10 +23,10 @@ export enum SpawnPattern {
  */
 export interface EntitySpawnConfig {
   entityType: string;
-  count: { min: number; max: number };  // Random count range
-  radius: number;                        // Distance from center in blocks
+  count: { min: number; max: number }; // Random count range
+  radius: number; // Distance from center in blocks
   pattern: SpawnPattern;
-  tierEvent?: string;                    // Optional event to trigger (for wolves)
+  tierEvent?: string; // Optional event to trigger (for wolves)
   customPositions?: Array<{ x: number; z: number }>; // For SpawnPattern.Custom
 }
 
@@ -89,11 +89,11 @@ export class DefenseConfiguration {
           radius: 25,
           pattern: SpawnPattern.Custom,
           customPositions: [
-            { x: 25, z: 0 },    // East
-            { x: -25, z: 0 },   // West
-            { x: 0, z: 25 },    // South
-            { x: 0, z: -25 },   // North
-            { x: 18, z: 18 },   // Southeast
+            { x: 25, z: 0 }, // East
+            { x: -25, z: 0 }, // West
+            { x: 0, z: 25 }, // South
+            { x: 0, z: -25 }, // North
+            { x: 18, z: 18 }, // Southeast
           ],
         },
         {
